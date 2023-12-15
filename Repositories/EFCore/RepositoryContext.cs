@@ -1,9 +1,9 @@
 ﻿using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Repositories
+namespace Repositories.EFCore
 {
-    internal class RepositoryContext : DbContext
+    public class RepositoryContext : DbContext
     {
         public RepositoryContext(DbContextOptions options) : base(options)
         {
