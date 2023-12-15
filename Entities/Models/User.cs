@@ -1,17 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Entities.Models
 {
-    public class User
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
         public string Name { get; set; }
-        public string UserName { get; set;}
-        [EmailAddress]
-        public string Email { get; set; }
         public Guid AdressId { get; set; }
-        [Phone]
-        public string Phone { get; set; }
         [Url]
         public string Website { get; set; }
         public Guid CompanyId { get; set; }
