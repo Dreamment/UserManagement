@@ -17,5 +17,8 @@ namespace Repositories.EFCore
             var adress = await FindByConditionAsync(a => a.Id.Equals(adressId), trackChanges);
             return adress.FirstOrDefault();
         }
+
+        public async Task UpdateAdressAsync(Adress adress)
+            => await UpdateAsync(adress);
     }
 }

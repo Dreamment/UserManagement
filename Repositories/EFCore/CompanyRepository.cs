@@ -17,5 +17,8 @@ namespace Repositories.EFCore
             var company = await FindByConditionAsync(c => c.Id.Equals(companyId), trackChanges);
             return company.FirstOrDefault();
         }
+
+        public async Task UpdateCompanyAsync(Company company)
+            => await UpdateAsync(company);
     }
 }

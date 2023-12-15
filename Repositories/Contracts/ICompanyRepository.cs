@@ -6,5 +6,6 @@ namespace Repositories.Contracts
     {
         Task<Company> GetCompanyByIdAsync(Guid companyId, bool trackChanges);
         Task CreateCompanyAsync(Company company);
+        Task UpdateCompanyAsync(Company company);
     }
 }
