@@ -16,10 +16,10 @@ namespace Repositories.EFCore
 
         }
 
-        public async Task CreateUser(User user)
+        public async Task CreateUserAsync(User user)
             => await CreateAsync(user);
 
-        public async Task DeleteUser(User user)
+        public async Task DeleteUserAsync(User user)
             => await DeleteAsync(user);
 
         public async Task<User> GetUserByEMailAsync(string email, bool trackChanges)
@@ -58,7 +58,7 @@ namespace Repositories.EFCore
             return user.FirstOrDefault();
         }
 
-        public async Task UpdateUser(User user)
+        public async Task UpdateUserAsync(User user)
             => await UpdateAsync(user);
     }
 }

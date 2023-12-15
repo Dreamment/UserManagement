@@ -11,9 +11,9 @@ namespace Repositories.Contracts
         Task<User> GetUserByEmailWithDetailsAsync(string email, bool trackChanges, params Expression<Func<User, object>>[] includes);
         Task<User> GetUserByUserNameAsync(string userName, bool trackChanges);
         Task<User> GetUserByUserNameWithDetailsAsync(string userName, bool trackChanges, params Expression<Func<User, object>>[] includes);
-        Task CreateUser(User user);
-        Task UpdateUser(User user);
-        Task DeleteUser(User user);
+        Task CreateUserAsync(User user);
+        Task UpdateUserAsync(User user);
+        Task DeleteUserAsync(User user);
 
     }
 }
