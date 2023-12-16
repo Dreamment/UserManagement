@@ -20,15 +20,19 @@ builder.Services.ConfigureJwt(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// if you want to use swagger in darkmode uncomment the following line it will open in almost 30 seconds delayed
+// after open or close dark mode rebuild the solution
+app.UseStaticFiles();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(s =>
     {
         s.SwaggerEndpoint("/swagger/v1/swagger.json", "UserManagementWebAPI v1");
+        s.InjectStylesheet("/swagger-ui/SwaggerDark.css");
     });
 }
+// you can use this url to open swagger if it will open late : https://localhost:7288/swagger/index.html
 
 app.UseHttpsRedirection();
 
