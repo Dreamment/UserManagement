@@ -35,6 +35,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 var serviceProvider = app.Services.CreateScope().ServiceProvider;
-ServiceExtensions.AddInitialPasswords(serviceProvider.GetRequiredService<IUserService>(), serviceProvider.GetRequiredService<IRepositoryManager>()).Wait();
+ServiceExtensions.AddInitialPasswords(serviceProvider.GetRequiredService<IRepositoryManager>()).Wait();
 
 app.Run();

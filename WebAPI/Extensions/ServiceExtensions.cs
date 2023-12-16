@@ -61,26 +61,24 @@ namespace WebAPI.Extensions
             });
         }
 
-        public static async Task AddInitialPasswords(IUserService _serviceManager, IRepositoryManager _repositoryManager)
+        public static async Task AddInitialPasswords(IRepositoryManager _repositoryManager)
         {
-            var userNames = new List<string> 
-            { 
-                "Bret", "Antonette", "Samantha", "Karianne", "Kamren", 
+            var userNames = new List<string>
+            {
+                "Bret", "Antonette", "Samantha", "Karianne", "Kamren",
                 "Leopoldo_Corkery", "Elwyn.Skiles", "Maxime_Nienow", "Delphine", "Moriah.Stanton" };
             for (int i = 1; i <= 10; i++)
             {
-                var user = await _serviceManager.GetUserInformationsAsync(i, false);
+                var passwordHasher = new PasswordHasher<User>();
+                var user = await _repositoryManager.User.GetUserByIdAsync(i, false);
                 if (user == null)
-                    break;
+                    continue;
                 if (user.UserName != userNames[i - 1])
                     continue;
-                if (user != null)
-                {
-                    await _serviceManager.UpdateUserPasswordAsync(
-                        i, 
-                        new UpdateUserPasswordDto { OldPassword = null, NewPassword = $"{user.UserName}" }, 
-                        false);
-                }
+                if (user.PasswordHash != null)
+                    continue;
+                user.PasswordHash = passwordHasher.HashPassword(user, $"{user.UserName}");
+                await _repositoryManager.User.UpdateUserAsync(user);
             }
             try
             {
