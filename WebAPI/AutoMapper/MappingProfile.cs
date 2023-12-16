@@ -13,6 +13,7 @@ namespace WebAPI.AutoMapper
         {
             CreateMap<User, GetUserInformationsDto>();
             CreateMap<UpdateUserAddressDto, Address>();
+            CreateMap<UpdateAdressGeoDto, Geo>();
             CreateMap<UpdateUserCompanyDto, Company>();
             CreateMap<UpdateUserInformationsDto, User>();
             CreateMap<Address, GetAddressDto>();

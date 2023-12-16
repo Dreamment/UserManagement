@@ -16,8 +16,8 @@ namespace Services.Contracts
         Task UpdateUserWebSiteAsync(string userName, UpdateUserWebSiteDto updateUserWebSiteDto, bool trackChanges);
         Task UpdateUserCompanyWithNewCompanyAsync(string userName, UpdateUserCompanyDto updateUserCompanyDto, bool trackChanges);
         Task UpdateUserCompanyWithExistingCompanyAsync(string userName, Guid CompanyId, bool trackChanges);
-        Task UpdateUserInformationsWtihNewCompanyOrAddressAsync(string userName, UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges);
-        Task UpdateUserInformationsWithExistingCompanyOrAddressAsync(string userName, Guid AddressId, Guid CompanyId , 
+        Task UpdateUserInformationsWithNewCompanyOrAddressAsync(string userName, UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges);
+        Task UpdateUserInformationsWithExistingCompanyOrAddressAsync(string userName, Guid? AddressId, Guid? CompanyId , 
             UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges);
 
     }

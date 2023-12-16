@@ -13,8 +13,6 @@ namespace Entities.DataTransferObjects.Update
         [Required]
         public string Zipcode { get; set; }
         [Required]
-        public string Lat { get; set; }
-        [Required]
-        public string Lng { get; set; }
+        public UpdateAdressGeoDto Geo { get; set; }
     }
 }

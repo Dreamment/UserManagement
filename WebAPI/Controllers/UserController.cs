@@ -53,6 +53,11 @@ namespace WebAPI.Controllers
                 {
                     return NotFound();
                 }
+                else if (e.Message == "User name already exists" || e.Message == "You give same user name with yours")
+                {
+                    return BadRequest(e.Message);
+                }
+
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
@@ -72,6 +77,10 @@ namespace WebAPI.Controllers
                 if (e.Message == "User not found")
                 {
                     return NotFound();
+                }
+                else if (e.Message == "User name already exists" || e.Message == "You give same user name with yours")
+                {
+                    return BadRequest(e.Message);
                 }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
@@ -93,6 +102,10 @@ namespace WebAPI.Controllers
                 {
                     return NotFound();
                 }
+                else if (e.Message == "Email already exists" || e.Message == "You give same email with yours")
+                {
+                    return BadRequest(e.Message);
+                }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
@@ -112,6 +125,11 @@ namespace WebAPI.Controllers
                 if (e.Message == "User not found")
                 {
                     return NotFound();
+                }
+                else if (e.Message == "Password is wrong" || e.Message == "Old password and new password can not be same" ||
+                    e.Message == "You give same password with yours")
+                {
+                    return BadRequest(e.Message);
                 }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
@@ -133,6 +151,10 @@ namespace WebAPI.Controllers
                 {
                     return NotFound();
                 }
+                else if (e.Message == "You give same phone number with yours")
+                {
+                    return BadRequest(e.Message);
+                }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
@@ -153,6 +175,10 @@ namespace WebAPI.Controllers
                 {
                     return NotFound();
                 }
+                else if (e.Message == "You give same address with yours")
+                {
+                    return BadRequest(e.Message);
+                }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
@@ -170,7 +196,12 @@ namespace WebAPI.Controllers
             {
                 if (e.Message == "User not found" || e.Message == "Address not found")
                 {
-                    return NotFound();
+                    return NotFound(e.Message);
+                }
+                else if (e.Message == "You give same address with yours" || e.Message == "You can not give new address or company" || 
+                    e.Message == "You must give addressId or companyId")
+                {
+                    return BadRequest(e.Message);
                 }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
@@ -192,6 +223,10 @@ namespace WebAPI.Controllers
                 {
                     return NotFound();
                 }
+                else if (e.Message == "You give same web site with yours")
+                {
+                    return BadRequest(e.Message);
+                }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
@@ -212,6 +247,10 @@ namespace WebAPI.Controllers
                 {
                     return NotFound();
                 }
+                else if (e.Message == "You give same company with yours")
+                {
+                    return BadRequest(e.Message);
+                }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
@@ -231,6 +270,10 @@ namespace WebAPI.Controllers
                 {
                     return NotFound();
                 }
+                else if (e.Message == "You give same company with yours")
+                {
+                    return BadRequest(e.Message);
+                }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
@@ -242,7 +285,7 @@ namespace WebAPI.Controllers
             try
             {
                 var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-                await _userService.UpdateUserInformationsWtihNewCompanyOrAddressAsync(currentUserName, updateUserInformationsDto, false);
+                await _userService.UpdateUserInformationsWithNewCompanyOrAddressAsync(currentUserName, updateUserInformationsDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -251,13 +294,17 @@ namespace WebAPI.Controllers
                 {
                     return NotFound();
                 }
+                else if (e.Message == "You give same informations with yours")
+                {
+                    return BadRequest(e.Message);
+                }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
 
         [HttpPut("UpdateUserInformationsWithExistingInformations")]
         public async Task<IActionResult> UpdateUserInformationsWithExistingInformations(
-            [FromQuery] Guid AddressId, [FromQuery] Guid CompanyId,
+            [FromQuery] Guid? AddressId, [FromQuery] Guid? CompanyId,
             [FromBody] UpdateUserInformationsDto updateUserInformationsDto)
         {
             try
@@ -271,7 +318,11 @@ namespace WebAPI.Controllers
             {
                 if (e.Message == "User not found" || e.Message == "Address not found" || e.Message == "Company not found")
                 {
-                    return NotFound();
+                    return NotFound(e.Message);
+                }
+                else if (e.Message == "You give same address or company with yours")
+                {
+                    return BadRequest(e.Message);
                 }
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
