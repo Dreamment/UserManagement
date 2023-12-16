@@ -13,11 +13,13 @@ namespace Repositories
             User = new UserRepository(_context);
             Address = new AddressRepository(_context);
             Company = new CompanyRepository(_context);
+            Geo = new GeoRepository(_context);
         }
 
         public IUserRepository User { get; }
         public IAddressRepository Address { get; }
         public ICompanyRepository Company { get; }
+        public IGeoRepository Geo { get; }
 
         public Task SaveAsync()
             => _context.SaveChangesAsync();
