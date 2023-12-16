@@ -2,6 +2,7 @@
 using Entities.DataTransferObjects.Auth;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Services.Contracts;
@@ -16,21 +17,26 @@ namespace Services
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
 
         private User? _user;
+
         public AuthenticationManager(
             IMapper mapper,
             UserManager<User> userManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            RoleManager<IdentityRole<int>> roleManager)
         {
             _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
+            _roleManager = roleManager;
         }
-        public string CreateToken()
+        public async Task<string> CreateTokenAsync()
         {
             var signingCredentials = GetSigningCredentials();
-            var tokenOptions = GenerateTokenOptions(signingCredentials);
+            var claims = await GetClaims();
+            var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
             return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         }
 
@@ -46,13 +52,24 @@ namespace Services
 
         public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto)
         {
+            var roles = await _roleManager.Roles.ToListAsync();
+            List<string> stringRoles = roles.Select(r => r.Name).ToList();
+            if (!stringRoles.Contains(userForRegistrationDto.Role))
+                throw new Exception($"Role {userForRegistrationDto.Role} does not exist");
+
             if (await _userManager.FindByNameAsync(userForRegistrationDto.UserName) != null)
                 throw new Exception($"User {userForRegistrationDto.UserName} is already registered");
 
             var user = _mapper.Map<User>(userForRegistrationDto);
+            var result = new IdentityResult();
             try
             {
-                return await _userManager.CreateAsync(user, userForRegistrationDto.Password);
+                result = await _userManager.CreateAsync(user, userForRegistrationDto.Password);
+                if (result.Succeeded)
+                    result = await _userManager.AddToRoleAsync(user, userForRegistrationDto.Role);
+                if (!result.Succeeded)
+                    await _userManager.DeleteAsync(user);
+                return result;
             }
             catch (Exception ex)
             {
@@ -90,14 +107,29 @@ namespace Services
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
-        private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials)
+        private async Task<List<Claim>> GetClaims()
+        {
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name, _user.UserName)
+            };
+
+            var roles = await _userManager.GetRolesAsync(_user);
+
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
+            return claims;
+        }
+
+        private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
 
             return new JwtSecurityToken(
                 issuer: jwtSettings["validIssuer"],
                 audience: jwtSettings["validAudience"],
-                claims: new List<Claim> { new(ClaimTypes.Name, _user.UserName) },
+                claims: claims,
                 expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["expirationInMinutes"])),
                 signingCredentials: signingCredentials);
         }

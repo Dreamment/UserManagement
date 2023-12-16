@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Repositories;
 using Repositories.Contracts;
 using Repositories.EFCore;
@@ -31,7 +32,7 @@ namespace WebAPI.Extensions
                 opts.Password.RequireDigit = true;
                 opts.Password.RequireLowercase = true;
                 opts.Password.RequireUppercase = true;
-                opts.Password.RequireNonAlphanumeric = true;
+                opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequiredLength = 8;
                 opts.User.RequireUniqueEmail = true;
 
@@ -42,7 +43,8 @@ namespace WebAPI.Extensions
         public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = Environment.GetEnvironmentVariable("secretKey");
+            var secretKey = jwtSettings["secretKey"];
+
             services.AddAuthentication(opts =>
             {
                 opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -94,6 +96,43 @@ namespace WebAPI.Extensions
         {
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<RepositoryContext>();
             dbContext.Database.Migrate();
+        }
+
+        public static void ConfigureSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(s =>
+            {
+                s.SwaggerDoc("v1", new OpenApiInfo { Title = "UserManagementWebAPI", Version = "v1" });
+
+                s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme."
+                    + "\n\n\nEnter 'Bearer' [space] and then your token in the text input below."
+                    + "\n\n\nExample: 'Bearer YourToken'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    }
+                });
+            });
         }
     }
 }

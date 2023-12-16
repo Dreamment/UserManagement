@@ -1,4 +1,5 @@
 ﻿using Entities.DataTransferObjects.Update;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
 
@@ -6,6 +7,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;

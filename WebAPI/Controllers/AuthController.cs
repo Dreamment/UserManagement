@@ -52,7 +52,7 @@ namespace WebAPI.Controllers
                 return BadRequest(new AuthResponseDto { Errors = new[] { "You must give Email or User Name" } });
             if (!result.Succeeded)
                 return BadRequest(new AuthResponseDto { Errors = new[] { "Wrong User Name or Email or Password" } });
-            var token = _authenticationManager.CreateToken();
+            var token = await _authenticationManager.CreateTokenAsync();
             return Ok(new AuthResponseDto { Success = true, Token = token });
         }
     }
