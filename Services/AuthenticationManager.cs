@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Repositories.Contracts;
 using Services.Contracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -18,6 +19,7 @@ namespace Services
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly IRepositoryManager _repositoryManager;
 
         private User? _user;
 
@@ -25,12 +27,14 @@ namespace Services
             IMapper mapper,
             UserManager<User> userManager,
             IConfiguration configuration,
-            RoleManager<IdentityRole<int>> roleManager)
+            RoleManager<IdentityRole<int>> roleManager,
+            IRepositoryManager repositoryManager)
         {
             _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
             _roleManager = roleManager;
+            _repositoryManager = repositoryManager;
         }
         public async Task<string> CreateTokenAsync()
         {
@@ -54,6 +58,12 @@ namespace Services
 
         public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto)
         {
+            if (userForRegistrationDto.Address == null && userForRegistrationDto.AddressId == null ||
+                userForRegistrationDto.Address != null && userForRegistrationDto.AddressId != null)
+                throw new Exception("You must give Address or AddressId");
+            if (userForRegistrationDto.Company == null && userForRegistrationDto.CompanyId == null ||
+                userForRegistrationDto.Company != null && userForRegistrationDto.CompanyId != null)
+                throw new Exception("You must give Company or CompanyId");
             var roles = await _roleManager.Roles.ToListAsync();
             List<string> stringRoles = roles.Select(r => r.Name).ToList();
             if (!stringRoles.Contains(userForRegistrationDto.Role))
@@ -63,6 +73,21 @@ namespace Services
                 throw new Exception($"User {userForRegistrationDto.UserName} is already registered");
 
             var user = _mapper.Map<User>(userForRegistrationDto);
+            if (user.Address != null)
+            {
+                user.Address.Id = Guid.NewGuid();
+                user.Address.Geo.Id = Guid.NewGuid();
+                user.AddressId = user.Address.Id;
+                user.Address.GeoId = user.Address.Geo.Id;
+                await _repositoryManager.Geo.CreateGeoAsync(user.Address.Geo);
+                await _repositoryManager.Address.CreateAddressAsync(user.Address);
+            }
+            if (user.Company != null)
+            {
+                user.Company.Id = Guid.NewGuid();
+                user.CompanyId = user.Company.Id;
+                await _repositoryManager.Company.CreateCompanyAsync(user.Company);
+            }
             var result = new IdentityResult();
             try
             {
@@ -71,6 +96,8 @@ namespace Services
                     result = await _userManager.AddToRoleAsync(user, userForRegistrationDto.Role);
                 if (!result.Succeeded)
                     await _userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                    await _repositoryManager.SaveAsync();
                 return result;
             }
             catch (Exception ex)
