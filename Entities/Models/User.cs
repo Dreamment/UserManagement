@@ -1,17 +1,25 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Entities.Models
 {
-    public class User : IdentityUser
+    public class User : IdentityUser<int>
     {
+        [Required]
         public string Name { get; set; }
-        public Guid AdressId { get; set; }
+        [AllowNull]
+        [ForeignKey("Address")]
+        public Guid? AddressId { get; set; }
+        [AllowNull]
         [Url]
-        public string Website { get; set; }
-        public Guid CompanyId { get; set; }
+        public string? Website { get; set; }
+        [AllowNull]
+        [ForeignKey("Company")]
+        public Guid? CompanyId { get; set; }
 
-        public Adress Adress { get; set; }
-        public Company Company { get; set; }
+        public Address? Address { get; set; }
+        public Company? Company { get; set; }
     }
 }
