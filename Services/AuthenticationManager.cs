@@ -42,6 +42,8 @@ namespace Services
 
         public async Task<SignInResult> LoginUser(UserForAuthenticationDto userForAuthenticationDto)
         {
+            if (userForAuthenticationDto.Email != null && userForAuthenticationDto.UserName != null)
+                return SignInResult.NotAllowed;
             if (!string.IsNullOrEmpty(userForAuthenticationDto.Email))
                 return await LoginUserWithEmail(userForAuthenticationDto.Email, userForAuthenticationDto.Password);
             else if (!string.IsNullOrEmpty(userForAuthenticationDto.UserName))
