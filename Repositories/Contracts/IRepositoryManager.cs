@@ -3,7 +3,7 @@
     public interface IRepositoryManager
     {
         IUserRepository User { get; }
-        IAdressRepository Adress { get; }
+        IAddressRepository Address { get; }
         ICompanyRepository Company { get; }
         Task SaveAsync();
     }

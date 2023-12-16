@@ -22,18 +22,18 @@ namespace Services
         public async Task<GetUserInformationsDto> GetUserInformationsAsync(int userId, bool trackChanges)
         {
             var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
-                u => u.Company, u => u.Adress, u => u.Adress.Geo) ?? throw new Exception("User not found");
+                u => u.Company, u => u.Address, u => u.Address.Geo) ?? throw new Exception("User not found");
             var userDto = _mapper.Map<GetUserInformationsDto>(user);
             return userDto;
         }
 
-        public async Task UpdateUserAdressWithExistingAdressAsync(int userId, Guid AdressId, bool trackChanges)
+        public async Task UpdateUserAddressWithExistingAddressAsync(int userId, Guid AddressId, bool trackChanges)
         {
             var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
-                u => u.Adress) ?? throw new Exception("User not found");
-            var adress = await _repositoryManager.Adress.GetAdressByIdAsync(AdressId, trackChanges) 
-                ?? throw new Exception("Adress not found");
-            user.AdressId = AdressId;
+                u => u.Address) ?? throw new Exception("User not found");
+            var Address = await _repositoryManager.Address.GetAddressByIdAsync(AddressId, trackChanges) 
+                ?? throw new Exception("Address not found");
+            user.AddressId = AddressId;
             await _repositoryManager.User.UpdateUserAsync(user);
             try
             {
@@ -45,14 +45,14 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserAddressWithNewAdressAsync(int userId, UpdateUserAddressDto updateUserAddressDto, bool trackChanges)
+        public async Task UpdateUserAddressWithNewAddressAsync(int userId, UpdateUserAddressDto updateUserAddressDto, bool trackChanges)
         {
             var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
-                u => u.Adress) ?? throw new Exception("User not found");
-            var adress = _mapper.Map<Adress>(updateUserAddressDto);
-            adress.Id = new Guid();
-            user.AdressId = adress.Id;
-            await _repositoryManager.Adress.CreateAdressAsync(adress);
+                u => u.Address) ?? throw new Exception("User not found");
+            var Address = _mapper.Map<Address>(updateUserAddressDto);
+            Address.Id = new Guid();
+            user.AddressId = Address.Id;
+            await _repositoryManager.Address.CreateAddressAsync(Address);
             await _repositoryManager.User.UpdateUserAsync(user);
             try
             {
@@ -117,17 +117,17 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserInformationsWithExistingCompanyOrAdressAsync(int userId, Guid AdressId, Guid CompanyId, 
+        public async Task UpdateUserInformationsWithExistingCompanyOrAddressAsync(int userId, Guid AddressId, Guid CompanyId, 
             UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges)
         {
             var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
-                u => u.Adress, u => u.Company) ?? throw new Exception("User not found");
-            var adress = await _repositoryManager.Adress.GetAdressByIdAsync(AdressId, trackChanges) 
-                ?? throw new Exception("Adress not found");
+                u => u.Address, u => u.Company) ?? throw new Exception("User not found");
+            var Address = await _repositoryManager.Address.GetAddressByIdAsync(AddressId, trackChanges) 
+                ?? throw new Exception("Address not found");
             var company = await _repositoryManager.Company.GetCompanyByIdAsync(CompanyId, trackChanges)
                 ?? throw new Exception("Company not found");
             _mapper.Map(updateUserInformationsDto, user);
-            user.AdressId = AdressId;
+            user.AddressId = AddressId;
             user.CompanyId = CompanyId;
             await _repositoryManager.User.UpdateUserAsync(user);
             try
@@ -140,18 +140,18 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserInformationsWtihNewCompanyOrAdressAsync(int userId, UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges)
+        public async Task UpdateUserInformationsWtihNewCompanyOrAddressAsync(int userId, UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges)
         {
             var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
-                u => u.Adress, u => u.Company, u => u.Adress.Geo)
+                u => u.Address, u => u.Company, u => u.Address.Geo)
                 ?? throw new Exception("User not found");
             _mapper.Map(updateUserInformationsDto, user);
             if (updateUserInformationsDto.UpdateUserAddressDto != null)
             {
-                var adress = _mapper.Map<Adress>(updateUserInformationsDto.UpdateUserAddressDto);
-                adress.Id = new Guid();
-                user.AdressId = adress.Id;
-                await _repositoryManager.Adress.CreateAdressAsync(adress);
+                var Address = _mapper.Map<Address>(updateUserInformationsDto.UpdateUserAddressDto);
+                Address.Id = new Guid();
+                user.AddressId = Address.Id;
+                await _repositoryManager.Address.CreateAddressAsync(Address);
             }
             if(updateUserInformationsDto.UpdateUserCompanyDto != null)
             {
