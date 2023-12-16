@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUserInformation([FromRoute] int userId)
+        public async Task<IActionResult> GetUserInformation([FromQuery] int userId)
         {
             try
             {
@@ -128,18 +128,18 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("UpdateUserAddressWithNewAdress")]
-        public async Task<IActionResult> UpdateUserAddressWithNewAdress([FromRoute] int userId,
+        [HttpPut("UpdateUserAddressWithNewAddress")]
+        public async Task<IActionResult> UpdateUserAddressWithNewAddress([FromRoute] int userId,
             [FromBody] UpdateUserAddressDto updateUserAddressDto)
         {
             try
             {
-                await _userService.UpdateUserAddressWithNewAdressAsync(userId, updateUserAddressDto, false);
+                await _userService.UpdateUserAddressWithNewAddressAsync(userId, updateUserAddressDto, false);
                 return NoContent();
             }
             catch (Exception e)
             {
-                if (e.Message == "User not found" || e.Message == "Adress not found")
+                if (e.Message == "User not found" || e.Message == "Address not found")
                 {
                     return NotFound();
                 }
@@ -147,17 +147,17 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("UpdateUserAdressWithExistingAdress")]
-        public async Task<IActionResult> UpdateUserAdressWithExistingAdress([FromRoute] int userId, [FromRoute] Guid adressId)
+        [HttpPut("UpdateUserAddressWithExistingAddress")]
+        public async Task<IActionResult> UpdateUserAddressWithExistingAddress([FromRoute] int userId, [FromRoute] Guid AddressId)
         {
             try
             {
-                await _userService.UpdateUserAdressWithExistingAdressAsync(userId, adressId, false);
+                await _userService.UpdateUserAddressWithExistingAddressAsync(userId, AddressId, false);
                 return NoContent();
             }
             catch (Exception e)
             {
-                if (e.Message == "User not found" || e.Message == "Adress not found")
+                if (e.Message == "User not found" || e.Message == "Address not found")
                 {
                     return NotFound();
                 }
@@ -227,7 +227,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                await _userService.UpdateUserInformationsWtihNewCompanyOrAdressAsync(userId, updateUserInformationsDto, false);
+                await _userService.UpdateUserInformationsWtihNewCompanyOrAddressAsync(userId, updateUserInformationsDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -242,18 +242,18 @@ namespace WebAPI.Controllers
 
         [HttpPut("UpdateUserInformationsWithExistingInformations")]
         public async Task<IActionResult> UpdateUserInformationsWithExistingInformations(
-            [FromRoute] int userId, [FromRoute] Guid AdressId, [FromRoute] Guid CompanyId,
+            [FromRoute] int userId, [FromRoute] Guid AddressId, [FromRoute] Guid CompanyId,
             [FromBody] UpdateUserInformationsDto updateUserInformationsDto)
         {
             try
             {
-                await _userService.UpdateUserInformationsWithExistingCompanyOrAdressAsync(
-                    userId, AdressId, CompanyId, updateUserInformationsDto, false);
+                await _userService.UpdateUserInformationsWithExistingCompanyOrAddressAsync(
+                    userId, AddressId, CompanyId, updateUserInformationsDto, false);
                 return NoContent();
             }
             catch (Exception e)
             {
-                if (e.Message == "User not found" || e.Message == "Adress not found" || e.Message == "Company not found")
+                if (e.Message == "User not found" || e.Message == "Address not found" || e.Message == "Company not found")
                 {
                     return NotFound();
                 }
