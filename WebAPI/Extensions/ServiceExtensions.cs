@@ -1,5 +1,4 @@
-﻿using Entities.DataTransferObjects.Update;
-using Entities.Models;
+﻿using Entities.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +21,8 @@ namespace WebAPI.Extensions
         }
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
             => services.AddDbContext<RepositoryContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
+            options.UseSqlServer(configuration.GetConnectionString("sqlConnection"),
+                b => b.MigrationsAssembly("WebAPI")));
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             services.AddIdentity<User, IdentityRole<int>>(opts =>
@@ -88,6 +88,11 @@ namespace WebAPI.Extensions
             {
                 throw new Exception($"Something went wrong inside AddInitialPasswords action: {ex.Message}");
             }
+        }
+        public static void EnsureSeedData(this IServiceScope serviceScope)
+        {
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<RepositoryContext>();
+            dbContext.Database.Migrate();
         }
     }
 }

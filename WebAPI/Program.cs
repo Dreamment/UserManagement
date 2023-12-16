@@ -34,7 +34,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-var serviceProvider = app.Services.CreateScope().ServiceProvider;
+var scope = app.Services.CreateScope();
+ServiceExtensions.EnsureSeedData(scope);
+var serviceProvider = scope.ServiceProvider;
 ServiceExtensions.AddInitialPasswords(serviceProvider.GetRequiredService<IRepositoryManager>()).Wait();
 
 app.Run();
