@@ -1,3 +1,5 @@
+using Repositories.Contracts;
+using Services.Contracts;
 using WebAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,5 +33,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+var serviceProvider = app.Services.CreateScope().ServiceProvider;
+ServiceExtensions.AddInitialPasswords(serviceProvider.GetRequiredService<IUserService>(), serviceProvider.GetRequiredService<IRepositoryManager>()).Wait();
 
 app.Run();

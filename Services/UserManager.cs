@@ -192,8 +192,11 @@ namespace Services
             var user = await _repositoryManager.User.GetUserByIdAsync(userId, trackChanges)
                 ?? throw new Exception("User not found");
             var passwordHasher = new PasswordHasher<User>();
-            if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, updateUserInformationsDto.OldPassword) == PasswordVerificationResult.Failed)
-                throw new Exception("Old password is incorrect");
+            if (user.PasswordHash != null)
+            {
+                if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, updateUserInformationsDto.OldPassword) == PasswordVerificationResult.Failed)
+                    throw new Exception("Old password is incorrect");
+            }
             user.PasswordHash = passwordHasher.HashPassword(user, updateUserInformationsDto.NewPassword);
             await _repositoryManager.User.UpdateUserAsync(user);
             try

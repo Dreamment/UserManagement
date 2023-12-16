@@ -1,4 +1,5 @@
-﻿using Entities.Models;
+﻿using Entities.DataTransferObjects.Update;
+using Entities.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +59,37 @@ namespace WebAPI.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
                 };
             });
+        }
+
+        public static async Task AddInitialPasswords(IUserService _serviceManager, IRepositoryManager _repositoryManager)
+        {
+            var userNames = new List<string> 
+            { 
+                "Bret", "Antonette", "Samantha", "Karianne", "Kamren", 
+                "Leopoldo_Corkery", "Elwyn.Skiles", "Maxime_Nienow", "Delphine", "Moriah.Stanton" };
+            for (int i = 1; i <= 10; i++)
+            {
+                var user = await _serviceManager.GetUserInformationsAsync(i, false);
+                if (user == null)
+                    break;
+                if (user.UserName != userNames[i - 1])
+                    continue;
+                if (user != null)
+                {
+                    await _serviceManager.UpdateUserPasswordAsync(
+                        i, 
+                        new UpdateUserPasswordDto { OldPassword = null, NewPassword = $"{user.UserName}" }, 
+                        false);
+                }
+            }
+            try
+            {
+                await _repositoryManager.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Something went wrong inside AddInitialPasswords action: {ex.Message}");
+            }
         }
     }
 }
