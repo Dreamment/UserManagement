@@ -27,8 +27,10 @@ namespace Entities.DataTransferObjects.Auth
         [Required]
         [Phone]
         public string PhoneNumber { get; set; }
-        [AllowNull]
-        public string? Password { get; set; }
+        [Required]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]{8,}$", 
+            ErrorMessage = "Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 digit, and be at least 8 characters long.")]
+        public string Password { get; set; }
         [Required]
         public string Role { get; set; }
     }
