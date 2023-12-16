@@ -18,6 +18,7 @@ namespace WebAPI.Extensions
         {
             services.AddScoped<IRepositoryManager, RepositoryManager>();
             services.AddScoped<IUserService, UserManager>();
+            services.AddScoped<IAuthenticationService, AuthenticationManager>();
         }
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
             => services.AddDbContext<RepositoryContext>(options =>
