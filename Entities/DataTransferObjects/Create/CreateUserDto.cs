@@ -8,7 +8,7 @@ namespace Entities.DataTransferObjects.Create
         [Required]
         public string Name { get; set; }
         [AllowNull]
-        public Guid AdressId { get; set; }
+        public Guid AddressId { get; set; }
         [Url]
         [AllowNull]
         public string Website { get; set; }
