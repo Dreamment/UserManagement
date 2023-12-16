@@ -19,17 +19,17 @@ namespace Services
             _mapper = mapper;
         }
 
-        public async Task<GetUserInformationsDto> GetUserInformationsAsync(int userId, bool trackChanges)
+        public async Task<GetUserInformationsDto> GetUserInformationsAsync(string userName, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
+            var user = await _repositoryManager.User.GetUserByUserNameWithDetailsAsync(userName, trackChanges,
                 u => u.Company, u => u.Address, u => u.Address.Geo) ?? throw new Exception("User not found");
             var userDto = _mapper.Map<GetUserInformationsDto>(user);
             return userDto;
         }
 
-        public async Task UpdateUserAddressWithExistingAddressAsync(int userId, Guid AddressId, bool trackChanges)
+        public async Task UpdateUserAddressWithExistingAddressAsync(string userName, Guid AddressId, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
+            var user = await _repositoryManager.User.GetUserByUserNameWithDetailsAsync(userName, trackChanges,
                 u => u.Address) ?? throw new Exception("User not found");
             var Address = await _repositoryManager.Address.GetAddressByIdAsync(AddressId, trackChanges) 
                 ?? throw new Exception("Address not found");
@@ -45,12 +45,12 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserAddressWithNewAddressAsync(int userId, UpdateUserAddressDto updateUserAddressDto, bool trackChanges)
+        public async Task UpdateUserAddressWithNewAddressAsync(string userName, UpdateUserAddressDto updateUserAddressDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
+            var user = await _repositoryManager.User.GetUserByUserNameWithDetailsAsync(userName, trackChanges,
                 u => u.Address) ?? throw new Exception("User not found");
             var Address = _mapper.Map<Address>(updateUserAddressDto);
-            Address.Id = new Guid();
+            Address.Id = Guid.NewGuid();
             user.AddressId = Address.Id;
             await _repositoryManager.Address.CreateAddressAsync(Address);
             await _repositoryManager.User.UpdateUserAsync(user);
@@ -64,9 +64,9 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserCompanyWithExistingCompanyAsync(int userId, Guid CompanyId, bool trackChanges)
+        public async Task UpdateUserCompanyWithExistingCompanyAsync(string userName, Guid CompanyId, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
+            var user = await _repositoryManager.User.GetUserByUserNameWithDetailsAsync(userName, trackChanges,
                 u => u.Company) ?? throw new Exception("User not found");
             var company = await _repositoryManager.Company.GetCompanyByIdAsync(CompanyId, trackChanges) 
                 ?? throw new Exception("Company not found");
@@ -82,12 +82,12 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserCompanyWithNewCompanyAsync(int userId, UpdateUserCompanyDto updateUserCompanyDto, bool trackChanges)
+        public async Task UpdateUserCompanyWithNewCompanyAsync(string userName, UpdateUserCompanyDto updateUserCompanyDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
+            var user = await _repositoryManager.User.GetUserByUserNameWithDetailsAsync(userName, trackChanges,
                 u => u.Company) ?? throw new Exception("User not found");
             var company = _mapper.Map<Company>(updateUserCompanyDto);
-            company.Id = new Guid();
+            company.Id = Guid.NewGuid();
             user.CompanyId = company.Id;
             await _repositoryManager.Company.CreateCompanyAsync(company);
             await _repositoryManager.User.UpdateUserAsync(user);
@@ -101,9 +101,9 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserEmailAsync(int userId, UpdateUserEmailDto updateUserEmailDto, bool trackChanges)
+        public async Task UpdateUserEmailAsync(string userName, UpdateUserEmailDto updateUserEmailDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdAsync(userId, trackChanges) 
+            var user = await _repositoryManager.User.GetUserByUserNameAsync(userName, trackChanges) 
                 ?? throw new Exception("User not found");
             user.Email = updateUserEmailDto.Email;
             await _repositoryManager.User.UpdateUserAsync(user);
@@ -117,10 +117,10 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserInformationsWithExistingCompanyOrAddressAsync(int userId, Guid AddressId, Guid CompanyId, 
+        public async Task UpdateUserInformationsWithExistingCompanyOrAddressAsync(string userName, Guid AddressId, Guid CompanyId, 
             UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
+            var user = await _repositoryManager.User.GetUserByUserNameWithDetailsAsync(userName, trackChanges,
                 u => u.Address, u => u.Company) ?? throw new Exception("User not found");
             var Address = await _repositoryManager.Address.GetAddressByIdAsync(AddressId, trackChanges) 
                 ?? throw new Exception("Address not found");
@@ -140,9 +140,10 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserInformationsWtihNewCompanyOrAddressAsync(int userId, UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges)
+        public async Task UpdateUserInformationsWtihNewCompanyOrAddressAsync(string userName, 
+            UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdWithDetailsAsync(userId, trackChanges,
+            var user = await _repositoryManager.User.GetUserByUserNameWithDetailsAsync(userName, trackChanges,
                 u => u.Address, u => u.Company, u => u.Address.Geo)
                 ?? throw new Exception("User not found");
             _mapper.Map(updateUserInformationsDto, user);
@@ -171,9 +172,9 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserNameAsync(int userId, UpdateUserNameDto updateUserInformationsDto, bool trackChanges)
+        public async Task UpdateUserNameAsync(string userName, UpdateUserNameDto updateUserInformationsDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdAsync(userId, trackChanges)
+            var user = await _repositoryManager.User.GetUserByUserNameAsync(userName, trackChanges)
                 ?? throw new Exception("User not found");
             user.Name = updateUserInformationsDto.Name;
             await _repositoryManager.User.UpdateUserAsync(user);
@@ -187,9 +188,9 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserPasswordAsync(int userId, UpdateUserPasswordDto updateUserInformationsDto, bool trackChanges)
+        public async Task UpdateUserPasswordAsync(string userName, UpdateUserPasswordDto updateUserInformationsDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdAsync(userId, trackChanges)
+            var user = await _repositoryManager.User.GetUserByUserNameAsync(userName, trackChanges)
                 ?? throw new Exception("User not found");
             var passwordHasher = new PasswordHasher<User>();
             if (user.PasswordHash != null)
@@ -209,9 +210,9 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserPhoneNumberAsync(int userId, UpdateUserPhoneNumberDto updateUserInformationsDto, bool trackChanges)
+        public async Task UpdateUserPhoneNumberAsync(string userName, UpdateUserPhoneNumberDto updateUserInformationsDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdAsync(userId, trackChanges)
+            var user = await _repositoryManager.User.GetUserByUserNameAsync(userName, trackChanges)
                 ?? throw new Exception("User not found");
             user.PhoneNumber = updateUserInformationsDto.PhoneNumber;
             await _repositoryManager.User.UpdateUserAsync(user);
@@ -225,9 +226,9 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserWebSiteAsync(int userId, UpdateUserWebSiteDto updateUserInformationsDto, bool trackChanges)
+        public async Task UpdateUserWebSiteAsync(string userName, UpdateUserWebSiteDto updateUserInformationsDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdAsync(userId, trackChanges)
+            var user = await _repositoryManager.User.GetUserByUserNameAsync(userName, trackChanges)
                 ?? throw new Exception("User not found");
             user.Website = updateUserInformationsDto.Website;
             await _repositoryManager.User.UpdateUserAsync(user);
@@ -241,11 +242,15 @@ namespace Services
             }
         }
 
-        public async Task UpdateUserUserNameAsync(int userId, UpdateUserUserNameDto updateUserInformationsDto, bool trackChanges)
+        public async Task UpdateUserUserNameAsync(string userName, UpdateUserUserNameDto updateUserInformationsDto, bool trackChanges)
         {
-            var user = await _repositoryManager.User.GetUserByIdAsync(userId, trackChanges)
+            var user = await _repositoryManager.User.GetUserByUserNameAsync(userName, trackChanges)
                 ?? throw new Exception("User not found");
+            var existingUser = await _repositoryManager.User.GetUserByUserNameAsync(updateUserInformationsDto.UserName, trackChanges);
+            if (existingUser != null && userName.ToUpperInvariant() != updateUserInformationsDto.UserName.ToUpperInvariant())
+                throw new Exception("User name already exists");
             user.UserName = updateUserInformationsDto.UserName;
+            user.NormalizedUserName = user.UserName.ToUpperInvariant();
             await _repositoryManager.User.UpdateUserAsync(user);
             try
             {

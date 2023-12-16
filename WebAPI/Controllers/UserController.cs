@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
+using System.Security.Claims;
 
 namespace WebAPI.Controllers
 {
@@ -18,11 +19,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUserInformation([FromQuery] int userId)
+        public async Task<IActionResult> GetUserInformation()
         {
             try
             {
-                var user = await _userService.GetUserInformationsAsync(userId, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                var user = await _userService.GetUserInformationsAsync(currentUserName, false);
                 return Ok(user);
             }
             catch (Exception e)
@@ -36,12 +38,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserName")]
-        public async Task<IActionResult> UpdateUserName([FromRoute] int userId,
+        public async Task<IActionResult> UpdateUserName(
             [FromBody] UpdateUserNameDto updateUserNameDto)
         {
             try
             {
-                await _userService.UpdateUserNameAsync(userId, updateUserNameDto, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserNameAsync(currentUserName, updateUserNameDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -55,12 +58,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserUserName")]
-        public async Task<IActionResult> UpdateUserUserName([FromRoute] int userId,
+        public async Task<IActionResult> UpdateUserUserName(
             [FromBody] UpdateUserUserNameDto updateUserUserNameDto)
         {
             try
             {
-                await _userService.UpdateUserUserNameAsync(userId, updateUserUserNameDto, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserUserNameAsync(currentUserName, updateUserUserNameDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -74,12 +78,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserEmail")]
-        public async Task<IActionResult> UpdateUserEmail([FromRoute] int userId,
+        public async Task<IActionResult> UpdateUserEmail(
             [FromBody] UpdateUserEmailDto updateUserEmailDto)
         {
             try
             {
-                await _userService.UpdateUserEmailAsync(userId, updateUserEmailDto, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserEmailAsync(currentUserName, updateUserEmailDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -93,12 +98,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserPassword")]
-        public async Task<IActionResult> UpdateUserPassword([FromRoute] int userId,
+        public async Task<IActionResult> UpdateUserPassword(
             [FromBody] UpdateUserPasswordDto updateUserPasswordDto)
         {
             try
             {
-                await _userService.UpdateUserPasswordAsync(userId, updateUserPasswordDto, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserPasswordAsync(currentUserName, updateUserPasswordDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -112,12 +118,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserPhoneNumber")]
-        public async Task<IActionResult> UpdateUserPhoneNumber([FromRoute] int userId,
+        public async Task<IActionResult> UpdateUserPhoneNumber(
             [FromBody] UpdateUserPhoneNumberDto updateUserPhoneNumberDto)
         {
             try
             {
-                await _userService.UpdateUserPhoneNumberAsync(userId, updateUserPhoneNumberDto, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserPhoneNumberAsync(currentUserName, updateUserPhoneNumberDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -131,12 +138,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserAddressWithNewAddress")]
-        public async Task<IActionResult> UpdateUserAddressWithNewAddress([FromRoute] int userId,
+        public async Task<IActionResult> UpdateUserAddressWithNewAddress(
             [FromBody] UpdateUserAddressDto updateUserAddressDto)
         {
             try
             {
-                await _userService.UpdateUserAddressWithNewAddressAsync(userId, updateUserAddressDto, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserAddressWithNewAddressAsync(currentUserName, updateUserAddressDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -150,11 +158,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserAddressWithExistingAddress")]
-        public async Task<IActionResult> UpdateUserAddressWithExistingAddress([FromRoute] int userId, [FromRoute] Guid AddressId)
+        public async Task<IActionResult> UpdateUserAddressWithExistingAddress([FromQuery] Guid AddressId)
         {
             try
             {
-                await _userService.UpdateUserAddressWithExistingAddressAsync(userId, AddressId, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserAddressWithExistingAddressAsync(currentUserName, AddressId, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -168,12 +177,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserWebSite")]
-        public async Task<IActionResult> UpdateUserWebSite([FromRoute] int userId,
+        public async Task<IActionResult> UpdateUserWebSite(
             [FromBody] UpdateUserWebSiteDto updateUserWebSiteDto)
         {
             try
             {
-                await _userService.UpdateUserWebSiteAsync(userId, updateUserWebSiteDto, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserWebSiteAsync(currentUserName, updateUserWebSiteDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -187,12 +197,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserCompanyWithNewCompany")]
-        public async Task<IActionResult> UpdateUserCompanyWithNewCompany([FromRoute] int userId,
+        public async Task<IActionResult> UpdateUserCompanyWithNewCompany(
             [FromBody] UpdateUserCompanyDto updateUserCompanyDto)
         {
             try
             {
-                await _userService.UpdateUserCompanyWithNewCompanyAsync(userId, updateUserCompanyDto, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserCompanyWithNewCompanyAsync(currentUserName, updateUserCompanyDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -206,11 +217,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserCompanyWithExistingCompany")]
-        public async Task<IActionResult> UpdateUserCompanyWithExistingCompany([FromRoute] int userId, [FromRoute] Guid companyId)
+        public async Task<IActionResult> UpdateUserCompanyWithExistingCompany([FromQuery] Guid companyId)
         {
             try
             {
-                await _userService.UpdateUserCompanyWithExistingCompanyAsync(userId, companyId, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserCompanyWithExistingCompanyAsync(currentUserName, companyId, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -224,12 +236,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("UpdateUserInformationsWithNewInformations")]
-        public async Task<IActionResult> UpdateUserInformationsWithNewInformations([FromRoute] int userId,
+        public async Task<IActionResult> UpdateUserInformationsWithNewInformations(
             [FromBody] UpdateUserInformationsDto updateUserInformationsDto)
         {
             try
             {
-                await _userService.UpdateUserInformationsWtihNewCompanyOrAddressAsync(userId, updateUserInformationsDto, false);
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.UpdateUserInformationsWtihNewCompanyOrAddressAsync(currentUserName, updateUserInformationsDto, false);
                 return NoContent();
             }
             catch (Exception e)
@@ -244,13 +257,14 @@ namespace WebAPI.Controllers
 
         [HttpPut("UpdateUserInformationsWithExistingInformations")]
         public async Task<IActionResult> UpdateUserInformationsWithExistingInformations(
-            [FromRoute] int userId, [FromRoute] Guid AddressId, [FromRoute] Guid CompanyId,
+            [FromQuery] Guid AddressId, [FromQuery] Guid CompanyId,
             [FromBody] UpdateUserInformationsDto updateUserInformationsDto)
         {
             try
             {
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
                 await _userService.UpdateUserInformationsWithExistingCompanyOrAddressAsync(
-                    userId, AddressId, CompanyId, updateUserInformationsDto, false);
+                    currentUserName, AddressId, CompanyId, updateUserInformationsDto, false);
                 return NoContent();
             }
             catch (Exception e)
