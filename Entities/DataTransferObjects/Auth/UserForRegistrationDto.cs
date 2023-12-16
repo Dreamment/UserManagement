@@ -20,7 +20,7 @@ namespace Entities.DataTransferObjects.Auth
         [AllowNull]
         public CreateCompanyDto? Company { get; set; }
         [Required]
-        public string Username { get; set; }
+        public string UserName { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
