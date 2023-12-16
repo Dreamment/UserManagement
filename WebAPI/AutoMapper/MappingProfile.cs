@@ -10,9 +10,12 @@ namespace WebAPI.AutoMapper
         public MappingProfile()
         {
             CreateMap<User, GetUserInformationsDto>();
-            CreateMap<UpdateUserAddressDto, Adress>();
+            CreateMap<UpdateUserAddressDto, Address>();
             CreateMap<UpdateUserCompanyDto, Company>();
             CreateMap<UpdateUserInformationsDto, User>();
+            CreateMap<Address, GetAddressDto>();
+            CreateMap<Company, GetCompanyDto>();
+            CreateMap<Geo, GetGeoDto>();
         }
     }
 }
