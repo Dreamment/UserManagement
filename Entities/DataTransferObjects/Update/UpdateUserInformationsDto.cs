@@ -12,7 +12,7 @@ namespace Entities.DataTransferObjects.Update
         public string Website { get; set; }
         [Phone]
         public string PhoneNumber { get; set; }
-        public UpdateUserAddressDto UpdateUserAddressDto{ get; set; }
-        public UpdateUserCompanyDto UpdateUserCompanyDto { get; set; }
+        public UpdateUserAddressDto? UpdateUserAddressDto{ get; set; }
+        public UpdateUserCompanyDto? UpdateUserCompanyDto { get; set; }
     }
 }
