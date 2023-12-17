@@ -41,6 +41,12 @@ namespace Repositories.EFCore
             return user.FirstOrDefault();
         }
 
+        public async Task<User> GetUserByPhoneNumberAsync(string phoneNumber, bool trackChanges)
+        {
+            var user = await FindByConditionAsync(u => u.PhoneNumber.Equals(phoneNumber), trackChanges);
+            return user.FirstOrDefault();
+        }
+
         public async Task<User> GetUserByUserNameAsync(string userName, bool trackChanges)
         {
             var user = await FindByConditionAsync(u => u.UserName.Equals(userName), trackChanges);
