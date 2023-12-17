@@ -9,6 +9,7 @@ using Repositories.Contracts;
 using Repositories.EFCore;
 using Services;
 using Services.Contracts;
+using StackExchange.Redis;
 using System.Text;
 
 namespace WebAPI.Extensions
@@ -133,6 +134,11 @@ namespace WebAPI.Extensions
                     }
                 });
             });
+        }
+        public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
+        {
+            var multiplexer = ConnectionMultiplexer.Connect(configuration.GetConnectionString("redisConnection"));
+            services.AddSingleton<IConnectionMultiplexer>(multiplexer);
         }
     }
 }

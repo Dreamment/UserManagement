@@ -17,6 +17,7 @@ builder.Services.ConfigureCustomServices();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJwt(builder.Configuration);
+builder.Services.ConfigureRedis(builder.Configuration);
 
 var app = builder.Build();
 
