@@ -10,7 +10,5 @@ namespace Entities.Models
         public string Lat { get; set; }
         [Required]
         public string Lng { get; set; }
-
-        public ICollection<Address>? Addresses { get; set; }
     }
 }

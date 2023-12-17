@@ -21,6 +21,5 @@ namespace Entities.Models
         public Guid? GeoId { get; set; }
 
         public Geo? Geo { get; set; }
-        public ICollection<User>? Users { get; set; }
     }
 }

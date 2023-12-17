@@ -12,7 +12,5 @@ namespace Entities.Models
         public string CatchPhrase { get; set; }
         [Required]
         public string Bs { get; set; }
-        
-        public ICollection<User>? Users { get; set; }
     }
 }

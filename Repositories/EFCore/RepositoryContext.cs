@@ -44,21 +44,21 @@ namespace Repositories.EFCore
 
             builder.Entity<User>()
                 .HasOne(u => u.Address)
-                .WithMany(a => a.Users)
+                .WithMany()
                 .HasForeignKey(u => u.AddressId)
                 .HasConstraintName("FK_User_Address")
                 .OnDelete(DeleteBehavior.SetNull);
 
             builder.Entity<User>()
                 .HasOne(u => u.Company)
-                .WithMany(c => c.Users)
+                .WithMany()
                 .HasForeignKey(u => u.CompanyId)
                 .HasConstraintName("FK_User_Company")
                 .OnDelete(DeleteBehavior.SetNull);
 
             builder.Entity<Address>()
                 .HasOne(a => a.Geo)
-                .WithMany(g => g.Addresses)
+                .WithMany()
                 .HasForeignKey(a => a.GeoId)
                 .HasConstraintName("FK_Address_Geo")
                 .OnDelete(DeleteBehavior.SetNull);
