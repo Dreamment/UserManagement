@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  webapi:
+    image: ${DOCKER_REGISTRY-}webapi
+    container_name: web_api_application
+    build:
+      context: .
+      dockerfile: WebAPI/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - sqlserver
+      - redis
+    networks:
+      - user-managament-network
+  
+  sqlserver:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: sql_server2022
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Password1
+    ports:
+      - "1433:1433"
+    networks:
+      - user-managament-network
+  
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - user-managament-network
+
+networks:
+  user-managament-network:
+    driver: bridge

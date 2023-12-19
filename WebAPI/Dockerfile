@@ -3,12 +3,14 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["WebAPI/WebAPI.csproj", "WebAPI/"]
+COPY ["Services/Services.csproj", "Services/"]
+COPY ["Repositories/Repositories.csproj", "Repositories/"]
+COPY ["Entities/Entities.csproj", "Entities/"]
 RUN dotnet restore "./WebAPI/./WebAPI.csproj"
 COPY . .
 WORKDIR "/src/WebAPI"
