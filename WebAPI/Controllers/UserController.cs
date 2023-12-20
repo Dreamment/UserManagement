@@ -1,4 +1,5 @@
-﻿using Entities.DataTransferObjects.Update;
+﻿using Entities.DataTransferObjects.Get;
+using Entities.DataTransferObjects.Update;
 using Entities.ErrorModel;
 using Entities.Exceptions.BadRequest;
 using Entities.Exceptions.Database;
@@ -22,7 +23,26 @@ namespace WebAPI.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Get user information associated with the token user.
+        /// </summary>
+        /// <returns> Information of user.</returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     GET /User
+        /// 
+        /// </remarks>
+        /// <response code ="200">User information returned successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpGet]
+        [ProducesResponseType(typeof(GetUserInformationsDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> GetUserInformation()
         {
             try
@@ -51,7 +71,32 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the name associated with the token user with new name.
+        /// </summary>
+        /// <param name="updateUserNameDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserName
+        ///     {
+        ///         "name": "New name"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code ="204">User's name updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">New name is same with user.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserName")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserName(
             [FromBody] UpdateUserNameDto updateUserNameDto)
         {
@@ -87,7 +132,34 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the username associated with the token user with new username.
+        /// </summary>
+        /// <param name="updateUserUserNameDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserUserName
+        ///     {
+        ///         "userName": "New username"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code ="204">User's username updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">New username is same with user.</response>
+        /// <response code ="409">New username is already registered by another person.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserUserName")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserUserName(
             [FromBody] UpdateUserUserNameDto updateUserUserNameDto)
         {
@@ -129,7 +201,34 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the email associated with the token user with new email.
+        /// </summary>
+        /// <param name="updateUserEmailDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserEmail
+        ///     {
+        ///         "email": "New email"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code ="204">User's email updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">New email is same with user.</response>
+        /// <response code ="409">User's email is already registered by another person.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserEmail")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserEmail(
             [FromBody] UpdateUserEmailDto updateUserEmailDto)
         {
@@ -171,7 +270,36 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the password associated with the token user with new password.
+        /// </summary>
+        /// <param name="updateUserPasswordDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserPassword
+        ///     {
+        ///         "oldPassword": "Old Password",
+        ///         "newPassword": "New Password"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code ="204">User's password updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">
+        ///     Old password is same with new password. <br />
+        ///     Old password is wrong.
+        /// </response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserPassword")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserPassword(
             [FromBody] UpdateUserPasswordDto updateUserPasswordDto)
         {
@@ -207,7 +335,34 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the phone number associated with the token user with new phone number.
+        /// </summary>
+        /// <param name="updateUserPhoneNumberDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserPhoneNumber
+        ///     {
+        ///         "phoneNumber": "New phone number"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code ="204">User's phone number updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">New phone number is same with user.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="409">User's phone number is already registered by another person.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserPhoneNumber")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserPhoneNumber(
             [FromBody] UpdateUserPhoneNumberDto updateUserPhoneNumberDto)
         {
@@ -249,7 +404,39 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the address associated with the token user with a new address.
+        /// </summary>
+        /// <param name="updateUserAddressDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserWtihNewAddress
+        ///     {
+        ///         "street": "New street",
+        ///         "suite": "New suite",
+        ///         "city": "New city",
+        ///         "zipcode": "New zipcode",
+        ///         "geo": {
+        ///             "lat": "New lat",
+        ///             "lng": "New lng"
+        ///         }
+        ///     }
+        /// 
+        /// </remarks>
+        /// <response code ="204">User's address updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">New address is same with user.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserAddressWithNewAddress")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserAddressWithNewAddress(
             [FromBody] UpdateUserAddressDto updateUserAddressDto)
         {
@@ -285,7 +472,28 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the address with an existing adress associated with the token.
+        /// </summary>
+        /// <param name="AddressId"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserAddressWithExistingAddress?AddressId=AddressId
+        /// </remarks>
+        /// <response code ="204">User's address updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">New address id is same with user.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserAddressWithExistingAddress")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserAddressWithExistingAddress([FromQuery] Guid AddressId)
         {
             try
@@ -320,7 +528,35 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the website associated with the token user with a new website.
+        /// </summary>
+        /// <param name="updateUserWebSiteDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserWebSite
+        ///     {
+        ///        "website": "New website"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code ="204">User's website updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">
+        ///     New website is same with user. <b />
+        ///     Did not enter a valid website.
+        /// </response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserWebSite")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserWebSite(
             [FromBody] UpdateUserWebSiteDto updateUserWebSiteDto)
         {
@@ -356,7 +592,34 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the company associated with the token user with a new company.
+        /// </summary>
+        /// <param name="updateUserCompanyDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserCompanyWithNewCompany
+        ///     {
+        ///         "name": "New name",
+        ///         "catchPhrase": "New catch phrase",
+        ///         "bs": "New bs"
+        ///     }
+        /// 
+        /// </remarks>
+        /// <response code ="204">User's company updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">New company is same with user.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserCompanyWithNewCompany")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserCompanyWithNewCompany(
             [FromBody] UpdateUserCompanyDto updateUserCompanyDto)
         {
@@ -392,7 +655,29 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the company associated with the token user with an existing company.
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserCompanyWithExistingCompany?companyId=companyId
+        /// 
+        /// </remarks>
+        /// <response code ="204">User's company updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">New company id is same with user.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserCompanyWithExistingCompany")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserCompanyWithExistingCompany([FromQuery] Guid companyId)
         {
             try
@@ -427,7 +712,49 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates the informations associated with the token user with new informations.
+        /// </summary>
+        /// <param name="updateUserInformationsDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserInformationsWithNewInformations
+        ///     {
+        ///         "name": "New name",
+        ///         "username": "New username",
+        ///         "email": "New email",
+        ///         "phoneNumber": "New phone number",
+        ///         "updateUserAddressDto": {
+        ///             "street": "New street",
+        ///             "suite": "New suite",
+        ///             "city": "New city",
+        ///             "zipcode": "New zipcode",
+        ///             "geo": {
+        ///                 "lat": "New lat",
+        ///                 "lng": "New lng"
+        ///             }
+        ///             "updateUserCompanyDto": {
+        ///                 "name": "New name",
+        ///                 "catchPhrase": "New catch phrase",
+        ///                 "bs": "New bs"
+        ///             }  
+        ///     }
+        /// 
+        /// </remarks>
+        /// <response code ="204">User's informations updated successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="400">Informations are same with user.</response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserInformationsWithNewInformations")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserInformationsWithNewInformations(
             [FromBody] UpdateUserInformationsDto updateUserInformationsDto)
         {
@@ -463,7 +790,46 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates the informations associated with the token user with existing and new informations.
+        /// </summary>
+        /// <param name="AddressId"></param>
+        /// <param name="CompanyId"></param>
+        /// <param name="updateUserInformationsDto"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT /User/UpdateUserInformationsWithExistingInformations?AddressId=AddressId&#38;CompanyId=CompanyId
+        ///     {
+        ///         "name": "New name",
+        ///         "username": "New username",
+        ///         "email": "New email",
+        ///         "website": "New website",
+        ///         "phoneNumber": "New phone number"
+        ///     }
+        /// 
+        /// </remarks>
+        /// <response code ="204">User's informations updated successfully.</response>
+        /// <response code ="404">
+        ///     User not found. <br />
+        ///     Address not found. <br />
+        ///     Company not found.
+        /// </response>
+        /// <response code ="400">
+        ///     Can not give new adress and new company. Give address id and/or company id.<br />
+        ///     Give at least an adressid or companyid.<br />
+        ///     Same address id and/or company id with user.
+        /// </response>
+        /// <response code ="403">User is deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpPut("UpdateUserInformationsWithExistingInformations")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> UpdateUserInformationsWithExistingInformations(
             [FromQuery] Guid? AddressId, [FromQuery] Guid? CompanyId,
             [FromBody] UpdateUserInformationsDto updateUserInformationsDto)
@@ -501,7 +867,27 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes the user associated with the token.
+        /// </summary>
+        /// <param></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     DELETE /User
+        ///     
+        /// </remarks>
+        /// <response code ="204">User deleted successfully.</response>
+        /// <response code ="404">User not found.</response>
+        /// <response code ="403">User is already deactivated.</response>
+        /// <response code ="500">Internal server error.</response>
         [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<IActionResult> DeleteUser()
         {
             try
