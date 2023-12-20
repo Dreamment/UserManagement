@@ -37,6 +37,12 @@ namespace WebAPI.Controllers
                     StatusCodes.Status404NotFound,
                     new ErrorDetails(StatusCodes.Status404NotFound, e.Message));
             }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
+            }
             catch (Exception e)
             {
                 return StatusCode(
@@ -73,6 +79,12 @@ namespace WebAPI.Controllers
                         StatusCodes.Status409Conflict,
                         new ErrorDetails(StatusCodes.Status409Conflict, e.Message));
             }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
+            }
             catch (Exception e)
             {
                 return StatusCode(
@@ -102,6 +114,12 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
+            }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
             }
             catch (Exception e)
             {
@@ -139,6 +157,12 @@ namespace WebAPI.Controllers
                     StatusCodes.Status409Conflict,
                     new ErrorDetails(StatusCodes.Status409Conflict, e.Message));
             }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
+            }
             catch (Exception e)
             {
                 return StatusCode(
@@ -175,6 +199,12 @@ namespace WebAPI.Controllers
                     StatusCodes.Status304NotModified,
                     new ErrorDetails(StatusCodes.Status304NotModified, e.Message));
             }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
+            }
             catch (Exception e)
             {
                 return StatusCode(
@@ -204,6 +234,12 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
+            }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
             }
             catch (Exception e)
             {
@@ -235,6 +271,12 @@ namespace WebAPI.Controllers
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
             }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
+            }
             catch (Exception e)
             {
                 return StatusCode(
@@ -263,6 +305,12 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
+            }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
             }
             catch (Exception e)
             {
@@ -294,6 +342,12 @@ namespace WebAPI.Controllers
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
             }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
+            }
             catch (Exception e)
             {
                 return StatusCode(
@@ -324,6 +378,12 @@ namespace WebAPI.Controllers
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
             }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
+            }
             catch (Exception e)
             {
                 return StatusCode(
@@ -352,6 +412,12 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
+            }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
             }
             catch (Exception e)
             {
@@ -382,6 +448,12 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
+            }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
             }
             catch (Exception e)
             {
@@ -414,6 +486,41 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
+            }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new ErrorDetails(StatusCodes.Status500InternalServerError, $"Internal server error: {e.Message}"));
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser()
+        {
+            try
+            {
+                var currentUserName = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                await _userService.DeactivateUserAsync(currentUserName, false);
+                return NoContent();
+            }
+            catch (NotFoundException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status404NotFound,
+                    new ErrorDetails(StatusCodes.Status404NotFound, e.Message));
+            }
+            catch (UserDeactiveDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
             }
             catch (Exception e)
             {

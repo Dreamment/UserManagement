@@ -19,6 +19,7 @@ namespace Services.Contracts
         Task UpdateUserInformationsWithNewCompanyOrAddressAsync(string userName, UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges);
         Task UpdateUserInformationsWithExistingCompanyOrAddressAsync(string userName, Guid? AddressId, Guid? CompanyId , 
             UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges);
+        Task DeactivateUserAsync(string userName, bool trackChanges);
 
     }
 }

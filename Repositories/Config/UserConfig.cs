@@ -28,7 +28,8 @@ namespace Repositories.Config
                     PhoneNumber = "1-770-736-8031 x56442",
                     Website = "hildegard.org",
                     CompanyId = _companyIds.ElementAt(0),
-                    LockoutEnabled = true
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 },
                 new User
                 {
@@ -42,7 +43,8 @@ namespace Repositories.Config
                     PhoneNumber = "010-692-6593 x09125",
                     Website = "anastasia.net",
                     CompanyId = _companyIds.ElementAt(1),
-                    LockoutEnabled = true
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 },
                 new User
                 {
@@ -56,7 +58,8 @@ namespace Repositories.Config
                     PhoneNumber = "1-463-123-4447",
                     Website = "ramiro.info",
                     CompanyId = _companyIds.ElementAt(2),
-                    LockoutEnabled = true
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 },
                 new User
                 {
@@ -70,7 +73,8 @@ namespace Repositories.Config
                     PhoneNumber = "493-170-9623 x156",
                     Website = "kale.biz",
                     CompanyId = _companyIds.ElementAt(3),
-                    LockoutEnabled = true
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 },
                 new User
                 {
@@ -84,7 +88,8 @@ namespace Repositories.Config
                     PhoneNumber = "(254)954-1289",
                     Website = "demarco.info",
                     CompanyId = _companyIds.ElementAt(4),
-                    LockoutEnabled = true
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 },
                 new User
                 {
@@ -98,7 +103,8 @@ namespace Repositories.Config
                     PhoneNumber = "1-477-935-8478 x6430",
                     Website = "ola.org",
                     CompanyId = _companyIds.ElementAt(5),
-                    LockoutEnabled = true
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 },
                 new User
                 {
@@ -112,7 +118,8 @@ namespace Repositories.Config
                     PhoneNumber = "210.067.6132",
                     Website = "elvis.io",
                     CompanyId = _companyIds.ElementAt(6),
-                    LockoutEnabled = true
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 },
                 new User
                 {
@@ -126,7 +133,8 @@ namespace Repositories.Config
                     PhoneNumber = "586.493.6943 x140",
                     Website = "jacynthe.com",
                     CompanyId = _companyIds.ElementAt(7),
-                    LockoutEnabled = true
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 },
                 new User
                 {
@@ -140,7 +148,8 @@ namespace Repositories.Config
                     PhoneNumber = "(775)976-6794 x41206",
                     Website = "conrad.com",
                     CompanyId = _companyIds.ElementAt(8),
-                    LockoutEnabled = true
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 },
                 new User
                 {
@@ -154,9 +163,9 @@ namespace Repositories.Config
                     PhoneNumber = "024-648-3804",
                     Website = "ambrose.net",
                     CompanyId = _companyIds.ElementAt(9),
-                    LockoutEnabled = true
-                }
-                );
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
+                });
         }
     }
 }

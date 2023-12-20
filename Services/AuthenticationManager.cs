@@ -114,6 +114,8 @@ namespace Services
             _user = await _userManager.FindByEmailAsync(email);
             if (_user == null)
                 return SignInResult.Failed;
+            if (_user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(_user.UserName);
             var result = await _userManager.CheckPasswordAsync(_user, password);
             if (!result)
                 return SignInResult.Failed;
@@ -125,6 +127,8 @@ namespace Services
             _user = await _userManager.FindByNameAsync(userName);
             if (_user == null)
                 return SignInResult.Failed;
+            if (_user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(_user.UserName);
             var result = await _userManager.CheckPasswordAsync(_user, password);
             if (!result)
                 return SignInResult.Failed;

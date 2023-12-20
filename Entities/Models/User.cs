@@ -5,6 +5,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Entities.Models
 {
+    public enum ACTIVE { Active, Deactive};
+
     public class User : IdentityUser<int>
     {
         [Required]
@@ -21,5 +23,7 @@ namespace Entities.Models
 
         public Address? Address { get; set; }
         public Company? Company { get; set; }
+
+        public ACTIVE IsActive { get; set; } = ACTIVE.Active;
     }
 }

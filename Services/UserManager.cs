@@ -24,15 +24,39 @@ namespace Services
             _cacheService = cacheService;
         }
 
+        public async Task DeactivateUserAsync(string userName, bool trackChanges)
+        {
+            var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
+                ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
+            user.IsActive = ACTIVE.Deactive;
+            await _repositoryManager.User.UpdateUserAsync(user);
+            try
+            {
+                await _repositoryManager.SaveAsync();
+            }
+            catch (Exception)
+            {
+                throw new SavingDatabaseException();
+            }
+            await _cacheService.ClearAsync($"user-all-{userName}");
+        }
+
         public async Task<GetUserInformationsDto> GetUserInformationsAsync(string userName, bool trackChanges)
         {
-            var userDto = await GetUserFromCacheAsync(userName, trackChanges);
+            var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
+            var userDto = _mapper.Map<GetUserInformationsDto>(user);
             return userDto;
         }
 
         public async Task UpdateUserAddressWithExistingAddressAsync(string userName, Guid AddressId, bool trackChanges)
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             if (user.AddressId == AddressId)
                 throw new SameObjectBadRequestException("address");
             var Address = await GetAddressInformationFromCacheAsync(AddressId, trackChanges)
@@ -49,7 +73,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -57,6 +80,8 @@ namespace Services
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             var Address = _mapper.Map<Address>(updateUserAddressDto);
             if (Address.Geo.Lat == user.Address.Geo.Lat &&
                 Address.Geo.Lng == user.Address.Geo.Lng &&
@@ -78,7 +103,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -86,6 +110,8 @@ namespace Services
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             if (user.CompanyId == CompanyId)
                 throw new SameObjectBadRequestException("company");
             var company = await GetCompanyInformationFromCacheAsync(CompanyId, trackChanges)
@@ -101,7 +127,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -109,6 +134,8 @@ namespace Services
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             var company = _mapper.Map<Company>(updateUserCompanyDto);
             if (company.Name == user.Company.Name &&
                 company.CatchPhrase == user.Company.CatchPhrase &&
@@ -127,7 +154,6 @@ namespace Services
             { 
                 throw new SavingDatabaseException(); 
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -135,6 +161,8 @@ namespace Services
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             if (user.Email == updateUserEmailDto.Email)
                 throw new SameObjectBadRequestException("E-Mail");
             var Email = await GetEmailFromCacheAsync(updateUserEmailDto.Email, trackChanges);
@@ -150,7 +178,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -161,6 +188,8 @@ namespace Services
                 throw new TooMuchPropBadRequestException("You can not give new address or company");
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                  ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             if (AddressId == null && CompanyId == null)
                 throw new NotEnoughPropBadRequestException("You must give addressId or companyId");
             if (AddressId == null || CompanyId == null)
@@ -202,7 +231,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -211,6 +239,8 @@ namespace Services
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             if (user == _mapper.Map<User>(updateUserInformationsDto))
                 throw new SameObjectBadRequestException("informations");
             if (updateUserInformationsDto.Name != null)
@@ -254,7 +284,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -262,6 +291,8 @@ namespace Services
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             if (user.Name == updateUserInformationsDto.Name)
                 throw new SameObjectBadRequestException("name");
             user.Name = updateUserInformationsDto.Name;
@@ -274,7 +305,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -284,6 +314,8 @@ namespace Services
                 throw new SamePasswordBadRequestException();
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             var passwordHasher = new PasswordHasher<User>();
             if (user.PasswordHash == passwordHasher.HashPassword(user, updateUserInformationsDto.NewPassword))
                 throw new SameObjectBadRequestException("password");
@@ -302,7 +334,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -310,6 +341,8 @@ namespace Services
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             if (user.PhoneNumber == updateUserInformationsDto.PhoneNumber)
                 throw new SameObjectBadRequestException("phone number");
             var phoneNumber = await GetPhoneFromCacheAsync(updateUserInformationsDto.PhoneNumber, trackChanges);
@@ -325,7 +358,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -333,6 +365,8 @@ namespace Services
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             if (user.Website == updateUserInformationsDto.Website)
                 throw new SameObjectBadRequestException("web site");
             user.Website = updateUserInformationsDto.Website;
@@ -345,7 +379,6 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
         }
 
@@ -356,6 +389,8 @@ namespace Services
 
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
                 ?? throw new EntityNotFoundException(userName);
+            if (user.IsActive == ACTIVE.Deactive)
+                throw new UserDeactiveDatabaseException(userName);
             var existingUser = await GetUserAllInformationsFromCacheAsync(updateUserInformationsDto.UserName, trackChanges);
             if (existingUser != null)
                 throw new AlreadyExistsDatabaseException("user name");
@@ -370,19 +405,7 @@ namespace Services
             {
                 throw new SavingDatabaseException();
             }
-            await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
-        }
-
-        private async Task<GetUserInformationsDto> GetUserFromCacheAsync(string userName, bool trackChanges)
-        {
-            return await _cacheService.GetOrAddAsync($"user-{userName}", async () =>
-            {
-                var user = await _repositoryManager.User.GetUserByUserNameWithDetailsAsync(userName, trackChanges,
-                    u => u.Address, u => u.Address.Geo, u => u.Company);
-                var userDto = _mapper.Map<GetUserInformationsDto>(user);
-                return userDto;
-            });
         }
 
         private async Task<User> GetUserAllInformationsFromCacheAsync(string userName, bool trackChanges)
@@ -391,6 +414,8 @@ namespace Services
             {
                 var user = await _repositoryManager.User.GetUserByUserNameWithDetailsAsync(userName, trackChanges,
                     u => u.Address, u => u.Address.Geo, u => u.Company);
+                if (user.IsActive == ACTIVE.Deactive)
+                    throw new UserDeactiveDatabaseException(userName);
                 return user;
             });
         }

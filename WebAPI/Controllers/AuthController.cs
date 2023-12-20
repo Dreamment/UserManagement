@@ -85,6 +85,12 @@ namespace WebAPI.Controllers
                     StatusCodes.Status404NotFound,
                     new ErrorDetails(StatusCodes.Status404NotFound, ex.Message));
             }
+            catch (UserDeactiveDatabaseException ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status400BadRequest,
+                    new ErrorDetails(StatusCodes.Status400BadRequest, ex.Message));
+            }
             catch (Exception ex)
             {
                 return StatusCode(
