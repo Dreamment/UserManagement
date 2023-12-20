@@ -11,6 +11,7 @@ using Repositories.EFCore;
 using Services;
 using Services.Contracts;
 using StackExchange.Redis;
+using System.Reflection;
 using System.Text;
 
 namespace WebAPI.Extensions
@@ -135,6 +136,9 @@ namespace WebAPI.Extensions
                         new List<string>()
                     }
                 });
+
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                s.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
         }
         public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
