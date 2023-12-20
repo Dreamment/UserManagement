@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using Entities.DataTransferObjects.Auth;
+using Entities.Exceptions.BadRequest;
+using Entities.Exceptions.Database;
+using Entities.Exceptions.NotFound;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -46,31 +49,31 @@ namespace Services
 
         public async Task<SignInResult> LoginUser(UserForAuthenticationDto userForAuthenticationDto)
         {
-            if (userForAuthenticationDto.Email != null && userForAuthenticationDto.UserName != null)
-                return SignInResult.NotAllowed;
+            if (userForAuthenticationDto.Email != null && userForAuthenticationDto.UserName != null ||
+                userForAuthenticationDto.Email == null && userForAuthenticationDto.UserName == null)
+                throw new TooMuchPropBadRequestException("You must give Email or Username");
             if (!string.IsNullOrEmpty(userForAuthenticationDto.Email))
                 return await LoginUserWithEmail(userForAuthenticationDto.Email, userForAuthenticationDto.Password);
             else if (!string.IsNullOrEmpty(userForAuthenticationDto.UserName))
                 return await LoginUserWithUserName(userForAuthenticationDto.UserName, userForAuthenticationDto.Password);
-            else
-                return SignInResult.NotAllowed;
+            throw new LoggingDatabaseException();
         }
 
         public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto)
         {
             if (userForRegistrationDto.Address == null && userForRegistrationDto.AddressId == null ||
                 userForRegistrationDto.Address != null && userForRegistrationDto.AddressId != null)
-                throw new Exception("You must give Address or AddressId");
+                throw new MissingPropBadRequestException("Address", "AddressId");
             if (userForRegistrationDto.Company == null && userForRegistrationDto.CompanyId == null ||
                 userForRegistrationDto.Company != null && userForRegistrationDto.CompanyId != null)
-                throw new Exception("You must give Company or CompanyId");
+                throw new MissingPropBadRequestException("Company", "CompanyId");
             var roles = await _roleManager.Roles.ToListAsync();
             List<string> stringRoles = roles.Select(r => r.Name).ToList();
             if (!stringRoles.Contains(userForRegistrationDto.Role))
-                throw new Exception($"Role {userForRegistrationDto.Role} does not exist");
+                throw new RoleNotExistsDatabaseException(userForRegistrationDto.Role);
 
             if (await _userManager.FindByNameAsync(userForRegistrationDto.UserName) != null)
-                throw new Exception($"User {userForRegistrationDto.UserName} is already registered");
+                throw new UserNameAlreadyRegisteredDatabaseException(userForRegistrationDto.UserName);
 
             var user = _mapper.Map<User>(userForRegistrationDto);
             if (user.Address != null)
@@ -100,9 +103,9 @@ namespace Services
                     await _repositoryManager.SaveAsync();
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception(ex.Message);
+                throw new SavingDatabaseException();
             }
         }
 

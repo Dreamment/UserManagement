@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Entities.DataTransferObjects.Get;
 using Entities.DataTransferObjects.Update;
+using Entities.Exceptions.BadRequest;
+using Entities.Exceptions.Database;
+using Entities.Exceptions.NotFound;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
 using Repositories.Contracts;
@@ -31,9 +34,9 @@ namespace Services
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges);
             if (user.AddressId == AddressId)
-                throw new Exception("You give same address with yours");
+                throw new SameObjectBadRequestException("address");
             var Address = await GetAddressInformationFromCacheAsync(AddressId, trackChanges)
-                ?? throw new Exception("Address not found");
+                ?? throw new EntityNotFoundException("address", AddressId);
             user.AddressId = AddressId;
             user.Address = Address;
 
@@ -42,9 +45,9 @@ namespace Services
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -53,7 +56,7 @@ namespace Services
         public async Task UpdateUserAddressWithNewAddressAsync(string userName, UpdateUserAddressDto updateUserAddressDto, bool trackChanges)
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             var Address = _mapper.Map<Address>(updateUserAddressDto);
             if (Address.Geo.Lat == user.Address.Geo.Lat &&
                 Address.Geo.Lng == user.Address.Geo.Lng &&
@@ -61,7 +64,7 @@ namespace Services
                 Address.Suite == user.Address.Suite &&
                 Address.City == user.Address.City &&
                 Address.Zipcode == user.Address.Zipcode)
-                throw new Exception("You give same address with yours");
+                throw new SameObjectBadRequestException("address");
             Address.Id = Guid.NewGuid();
             user.AddressId = Address.Id;
             user.Address = Address;
@@ -71,9 +74,9 @@ namespace Services
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -82,11 +85,11 @@ namespace Services
         public async Task UpdateUserCompanyWithExistingCompanyAsync(string userName, Guid CompanyId, bool trackChanges)
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             if (user.CompanyId == CompanyId)
-                throw new Exception("You give same company with yours");
+                throw new SameObjectBadRequestException("company");
             var company = await GetCompanyInformationFromCacheAsync(CompanyId, trackChanges)
-                ?? throw new Exception("Company not found");
+                ?? throw new EntityNotFoundException("company",CompanyId);
             user.CompanyId = CompanyId;
             user.Company = company;
             await _repositoryManager.User.UpdateUserAsync(user);
@@ -94,9 +97,9 @@ namespace Services
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -105,12 +108,12 @@ namespace Services
         public async Task UpdateUserCompanyWithNewCompanyAsync(string userName, UpdateUserCompanyDto updateUserCompanyDto, bool trackChanges)
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             var company = _mapper.Map<Company>(updateUserCompanyDto);
             if (company.Name == user.Company.Name &&
                 company.CatchPhrase == user.Company.CatchPhrase &&
                 company.Bs == user.Company.Bs)
-                throw new Exception("You give same company with yours");
+                throw new SameObjectBadRequestException("company");
             company.Id = Guid.NewGuid();
             user.CompanyId = company.Id;
             user.Company = company;
@@ -120,9 +123,9 @@ namespace Services
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
+            catch (Exception) 
+            { 
+                throw new SavingDatabaseException(); 
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -131,21 +134,21 @@ namespace Services
         public async Task UpdateUserEmailAsync(string userName, UpdateUserEmailDto updateUserEmailDto, bool trackChanges)
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             if (user.Email == updateUserEmailDto.Email)
-                throw new Exception("You give same email with yours");
+                throw new SameObjectBadRequestException("E-Mail");
             var Email = await GetEmailFromCacheAsync(updateUserEmailDto.Email, trackChanges);
             if (Email != null)
-                throw new Exception("Email already exists");
+                throw new AlreadyExistsDatabaseException("email");
             user.Email = updateUserEmailDto.Email;
             await _repositoryManager.User.UpdateUserAsync(user);
             try
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -155,11 +158,11 @@ namespace Services
             UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges)
         {
             if (updateUserInformationsDto.UpdateUserAddressDto != null || updateUserInformationsDto.UpdateUserCompanyDto != null)
-                throw new Exception("You can not give new address or company");
+                throw new TooMuchPropBadRequestException("You can not give new address or company");
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                 ?? throw new Exception("User not found");
+                 ?? throw new EntityNotFoundException(userName);
             if (AddressId == null && CompanyId == null)
-                throw new Exception("You must give addressId or companyId");
+                throw new NotEnoughPropBadRequestException("You must give addressId or companyId");
             if (AddressId == null || CompanyId == null)
             {
                 if (AddressId == null)
@@ -168,11 +171,11 @@ namespace Services
                     CompanyId = user.CompanyId;
             }
             if (user.AddressId == AddressId && user.CompanyId == CompanyId)
-                throw new Exception("You give same address or company with yours");
+                throw new SameObjectBadRequestException("address or company");
             var Address = await GetAddressInformationFromCacheAsync(AddressId.Value, trackChanges)
-                ?? throw new Exception("Address not found");
+                ?? throw new EntityNotFoundException("address", AddressId);
             var company = await GetCompanyInformationFromCacheAsync(CompanyId.Value, trackChanges)
-                ?? throw new Exception("Company not found");
+                ?? throw new EntityNotFoundException("company", CompanyId);
             if (updateUserInformationsDto.Name != null)
                 user.Name = updateUserInformationsDto.Name;
             if (updateUserInformationsDto.Username != null)
@@ -195,9 +198,9 @@ namespace Services
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch(Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -207,9 +210,9 @@ namespace Services
             UpdateUserInformationsDto updateUserInformationsDto, bool trackChanges)
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             if (user == _mapper.Map<User>(updateUserInformationsDto))
-                throw new Exception("You give same informations with yours");
+                throw new SameObjectBadRequestException("informations");
             if (updateUserInformationsDto.Name != null)
                 user.Name = updateUserInformationsDto.Name;
             if (updateUserInformationsDto.Username != null)
@@ -247,9 +250,9 @@ namespace Services
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch(Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -258,18 +261,18 @@ namespace Services
         public async Task UpdateUserNameAsync(string userName, UpdateUserNameDto updateUserInformationsDto, bool trackChanges)
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             if (user.Name == updateUserInformationsDto.Name)
-                throw new Exception("You give same name with yours");
+                throw new SameObjectBadRequestException("name");
             user.Name = updateUserInformationsDto.Name;
             await _repositoryManager.User.UpdateUserAsync(user);
             try
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -278,16 +281,16 @@ namespace Services
         public async Task UpdateUserPasswordAsync(string userName, UpdateUserPasswordDto updateUserInformationsDto, bool trackChanges)
         {
             if (updateUserInformationsDto.OldPassword == updateUserInformationsDto.NewPassword)
-                throw new Exception("Old password and new password can not be same");
+                throw new SamePasswordBadRequestException();
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             var passwordHasher = new PasswordHasher<User>();
             if (user.PasswordHash == passwordHasher.HashPassword(user, updateUserInformationsDto.NewPassword))
-                throw new Exception("You give same password with yours");
+                throw new SameObjectBadRequestException("password");
             if (user.PasswordHash != null)
             {
                 if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, updateUserInformationsDto.OldPassword) == PasswordVerificationResult.Failed)
-                    throw new Exception("Password is wrong");
+                    throw new PasswordWrongBadRequestException();
             }
             user.PasswordHash = passwordHasher.HashPassword(user, updateUserInformationsDto.NewPassword);
             await _repositoryManager.User.UpdateUserAsync(user);
@@ -295,9 +298,9 @@ namespace Services
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -306,21 +309,21 @@ namespace Services
         public async Task UpdateUserPhoneNumberAsync(string userName, UpdateUserPhoneNumberDto updateUserInformationsDto, bool trackChanges)
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             if (user.PhoneNumber == updateUserInformationsDto.PhoneNumber)
-                throw new Exception("You give same phone number with yours");
+                throw new SameObjectBadRequestException("phone number");
             var phoneNumber = await GetPhoneFromCacheAsync(updateUserInformationsDto.PhoneNumber, trackChanges);
             if (phoneNumber != null)
-                throw new Exception("Phone number already exists");
+                throw new AlreadyExistsDatabaseException("phone number");
             user.PhoneNumber = updateUserInformationsDto.PhoneNumber;
             await _repositoryManager.User.UpdateUserAsync(user);
             try
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -329,18 +332,18 @@ namespace Services
         public async Task UpdateUserWebSiteAsync(string userName, UpdateUserWebSiteDto updateUserInformationsDto, bool trackChanges)
         {
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             if (user.Website == updateUserInformationsDto.Website)
-                throw new Exception("You give same website with yours");
+                throw new SameObjectBadRequestException("web site");
             user.Website = updateUserInformationsDto.Website;
             await _repositoryManager.User.UpdateUserAsync(user);
             try
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");
@@ -349,13 +352,13 @@ namespace Services
         public async Task UpdateUserUserNameAsync(string userName, UpdateUserUserNameDto updateUserInformationsDto, bool trackChanges)
         {
             if (userName.ToUpperInvariant() == updateUserInformationsDto.UserName.ToUpperInvariant())
-                throw new Exception("You give same user name with yours");
+                throw new EntityNotFoundException(userName);
 
             var user = await GetUserAllInformationsFromCacheAsync(userName, trackChanges)
-                ?? throw new Exception("User not found");
+                ?? throw new EntityNotFoundException(userName);
             var existingUser = await GetUserAllInformationsFromCacheAsync(updateUserInformationsDto.UserName, trackChanges);
             if (existingUser != null)
-                throw new Exception("User name already exists");
+                throw new AlreadyExistsDatabaseException("user name");
             user.UserName = updateUserInformationsDto.UserName;
             user.NormalizedUserName = user.UserName.ToUpperInvariant();
             await _repositoryManager.User.UpdateUserAsync(user);
@@ -363,9 +366,9 @@ namespace Services
             {
                 await _repositoryManager.SaveAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception(e.Message);
+                throw new SavingDatabaseException();
             }
             await _cacheService.ClearAsync($"user-{userName}");
             await _cacheService.ClearAsync($"user-all-{userName}");

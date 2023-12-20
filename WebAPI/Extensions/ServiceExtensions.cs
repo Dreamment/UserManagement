@@ -1,4 +1,5 @@
-﻿using Entities.Models;
+﻿using Entities.Exceptions.Database;
+using Entities.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -91,7 +92,7 @@ namespace WebAPI.Extensions
             }
             catch (Exception ex)
             {
-                throw new Exception($"Something went wrong inside AddInitialPasswords action: {ex.Message}");
+                throw new SeedDatabaseException($"Something went wrong inside AddInitialPasswords action: {ex.Message}");
             }
         }
         public static void EnsureSeedData(this IServiceScope serviceScope)
