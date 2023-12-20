@@ -73,12 +73,6 @@ namespace WebAPI.Controllers
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
             }
-            catch (UserNameAlreadyRegisteredDatabaseException e)
-            {
-                return StatusCode(
-                        StatusCodes.Status409Conflict,
-                        new ErrorDetails(StatusCodes.Status409Conflict, e.Message));
-            }
             catch (UserDeactiveDatabaseException e)
             {
                 return StatusCode(
@@ -114,6 +108,12 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
+            }
+            catch (AlreadyExistsDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status409Conflict,
+                    new ErrorDetails(StatusCodes.Status409Conflict, e.Message));
             }
             catch (UserDeactiveDatabaseException e)
             {
@@ -151,7 +151,7 @@ namespace WebAPI.Controllers
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
             }
-            catch(AlreadyExistsDatabaseException e)
+            catch (AlreadyExistsDatabaseException e)
             {
                 return StatusCode(
                     StatusCodes.Status409Conflict,
@@ -192,12 +192,6 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status400BadRequest,
                     new ErrorDetails(StatusCodes.Status400BadRequest, e.Message));
-            }
-            catch (SavingDatabaseException e)
-            {
-                return StatusCode(
-                    StatusCodes.Status304NotModified,
-                    new ErrorDetails(StatusCodes.Status304NotModified, e.Message));
             }
             catch (UserDeactiveDatabaseException e)
             {
@@ -240,6 +234,12 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
                     new ErrorDetails(StatusCodes.Status403Forbidden, e.Message));
+            }
+            catch (AlreadyExistsDatabaseException e)
+            {
+                return StatusCode(
+                    StatusCodes.Status409Conflict,
+                    new ErrorDetails(StatusCodes.Status409Conflict, e.Message));
             }
             catch (Exception e)
             {

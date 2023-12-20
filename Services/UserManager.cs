@@ -317,8 +317,6 @@ namespace Services
             if (user.IsActive == ACTIVE.Deactive)
                 throw new UserDeactiveDatabaseException(userName);
             var passwordHasher = new PasswordHasher<User>();
-            if (user.PasswordHash == passwordHasher.HashPassword(user, updateUserInformationsDto.NewPassword))
-                throw new SameObjectBadRequestException("password");
             if (user.PasswordHash != null)
             {
                 if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, updateUserInformationsDto.OldPassword) == PasswordVerificationResult.Failed)
