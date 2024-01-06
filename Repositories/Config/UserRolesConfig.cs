@@ -17,6 +17,11 @@ namespace Repositories.Config
                     RoleId = 1
                 });
             }
+            UserRoles.Add(new IdentityUserRole<int>
+            {
+                UserId = 11,
+                RoleId = 2
+            });
             builder.HasData(
                 UserRoles.ToArray()
                 );

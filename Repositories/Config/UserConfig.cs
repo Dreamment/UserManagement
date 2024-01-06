@@ -165,6 +165,17 @@ namespace Repositories.Config
                     CompanyId = _companyIds.ElementAt(9),
                     LockoutEnabled = true,
                     IsActive = ACTIVE.Active
+                },
+                new User
+                {
+                    Id = 11,
+                    Name = "admin",
+                    UserName = "admin",
+                    NormalizedUserName = "ADMIN",
+                    Email = "admin@admin.com",
+                    NormalizedEmail = "ADMIN@ADMIN.com",
+                    LockoutEnabled = true,
+                    IsActive = ACTIVE.Active
                 });
         }
     }

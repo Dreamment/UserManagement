@@ -14,6 +14,12 @@ namespace Repositories.Config
                     Id = 1,
                     Name = "User",
                     NormalizedName = "USER"
+                },
+                new IdentityRole<int>
+                {
+                    Id = 2,
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
                 });
         }
     }
