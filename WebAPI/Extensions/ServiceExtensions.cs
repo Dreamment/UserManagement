@@ -22,6 +22,7 @@ namespace WebAPI.Extensions
         {
             services.AddScoped<IRepositoryManager, RepositoryManager>();
             services.AddScoped<IUserService, UserManager>();
+            services.AddScoped<IAdminService, AdminManager>();
             services.AddScoped<IAuthenticationService, AuthenticationManager>();
             services.AddSingleton<ICacheService, RedisCacheManager>();
         }
@@ -72,9 +73,9 @@ namespace WebAPI.Extensions
         {
             var userNames = new List<string>
             {
-                "Bret", "Antonette", "Samantha", "Karianne", "Kamren",
-                "Leopoldo_Corkery", "Elwyn.Skiles", "Maxime_Nienow", "Delphine", "Moriah.Stanton" };
-            for (int i = 1; i <= 10; i++)
+                "Bret", "Antonette", "Samantha", "Karianne", "Kamren","Leopoldo_Corkery", 
+                "Elwyn.Skiles", "Maxime_Nienow", "Delphine", "Moriah.Stanton", "admin" };
+            for (int i = 1; i <= 11; i++)
             {
                 var passwordHasher = new PasswordHasher<User>();
                 var user = await _repositoryManager.User.GetUserByIdAsync(i, false);
@@ -98,6 +99,7 @@ namespace WebAPI.Extensions
         }
         public static void EnsureSeedData(this IServiceScope serviceScope)
         {
+            Thread.Sleep(2000);
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<RepositoryContext>();
             dbContext.Database.Migrate();
         }
