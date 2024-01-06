@@ -17,6 +17,11 @@ namespace Services
             _cache = redisCon.GetDatabase();
         }
 
+        public void ClearAll()
+        {
+            _redisCon.GetDatabase().Execute("FLUSHALL");
+        }
+
         public async Task ClearAsync(string key)
             => await _cache.KeyDeleteAsync(key);
 
