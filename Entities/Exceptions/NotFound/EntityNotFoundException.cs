@@ -10,6 +10,10 @@
         {
 
         }
+        public EntityNotFoundException() : base("Users not found")
+        {
+
+        }
 
         private static string GetErrorMessageId(string EntityType, Guid? id)
         {
