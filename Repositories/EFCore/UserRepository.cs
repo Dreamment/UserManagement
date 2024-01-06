@@ -17,6 +17,12 @@ namespace Repositories.EFCore
         public async Task DeleteUserAsync(User user)
             => await DeleteAsync(user);
 
+        public async Task<IEnumerable<User>> GetAllUsersAsync(bool trackChanges)
+            => await FindAllAsync(trackChanges);
+
+        public Task<IEnumerable<User>> GetAllUsersWithDetailsAsync(bool trackChanges, params Expression<Func<User, object>>[] includes)
+            => FindAllWithDetailsAsync(trackChanges, includes);
+
         public async Task<User> GetUserByEMailAsync(string email, bool trackChanges)
         {
             var user = await FindByConditionAsync(u => u.Email.Equals(email), trackChanges);

@@ -5,6 +5,8 @@ namespace Repositories.Contracts
 {
     public interface IUserRepository : IRepositoryBase<User>
     {
+        Task<IEnumerable<User>> GetAllUsersAsync(bool trackChanges);
+        Task<IEnumerable<User>> GetAllUsersWithDetailsAsync(bool trackChanges, params Expression<Func<User, object>>[] includes);
         Task<User> GetUserByIdAsync(int userId, bool trackChanges);
         Task<User> GetUserByIdWithDetailsAsync(int userId, bool trackChanges, params Expression<Func<User, object>>[] includes);
         Task<User> GetUserByEMailAsync(string email, bool trackChanges);
