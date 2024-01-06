@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Entities.DataTransferObjects.Admin;
 using Entities.DataTransferObjects.Auth;
 using Entities.DataTransferObjects.Create;
 using Entities.DataTransferObjects.Get;
@@ -23,6 +24,10 @@ namespace WebAPI.AutoMapper
             CreateMap<CreateAdressDto, Address>();
             CreateMap<CreateCompanyDto, Company>();
             CreateMap<CreateGeoDto, Geo>();
+            CreateMap<AdminUpdateUserInformationsDto, User>();
+            CreateMap<AdminUpdateAddressDto, Address>();
+            CreateMap<AdminUpdateGeoDto, Geo>();
+            CreateMap<AdminUpdateCompanyDto, Company>();
         }
     }
 }
