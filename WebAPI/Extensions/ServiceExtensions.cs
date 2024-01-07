@@ -66,6 +66,19 @@ namespace WebAPI.Extensions
                     ValidAudience = jwtSettings["validAudience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
                 };
+                opts.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationHub"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
         }
 
@@ -73,7 +86,7 @@ namespace WebAPI.Extensions
         {
             var userNames = new List<string>
             {
-                "Bret", "Antonette", "Samantha", "Karianne", "Kamren","Leopoldo_Corkery", 
+                "Bret", "Antonette", "Samantha", "Karianne", "Kamren","Leopoldo_Corkery",
                 "Elwyn.Skiles", "Maxime_Nienow", "Delphine", "Moriah.Stanton", "admin" };
             for (int i = 1; i <= 11; i++)
             {
