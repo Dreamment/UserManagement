@@ -4,7 +4,9 @@ using Entities.Exceptions.BadRequest;
 using Entities.Exceptions.Database;
 using Entities.Exceptions.NotFound;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Services.Contracts;
+using WebAPI.Hubs;
 
 namespace WebAPI.Controllers
 {
@@ -13,10 +15,12 @@ namespace WebAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationManager;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public AuthController(IAuthenticationService authenticationManager)
+        public AuthController(IAuthenticationService authenticationManager, IHubContext<NotificationHub> hubContext)
         {
             _authenticationManager = authenticationManager;
+            _hubContext = hubContext;
         }
 
         [HttpPost("Register")]
@@ -32,6 +36,7 @@ namespace WebAPI.Controllers
                         StatusCodes.Status400BadRequest,
                         new ErrorDetails(StatusCodes.Status400BadRequest, error));
                 }
+                await _hubContext.Clients.Group("Admin").SendAsync("UserAdded", $"User added with {userForRegistrationDto.UserName}");
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (BadRequestException ex)
