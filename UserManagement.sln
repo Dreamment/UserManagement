@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{5E0ECAE2-27CC-4BE7-888A-E75C737F2C5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI", "WebAPI\WebAPI.csproj", "{5E0ECAE2-27CC-4BE7-888A-E75C737F2C5A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{60B0A1D4-E87D-443E-890D-6E041F4756FF}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{A1541232-B42E-4062-81F4-4666FEF899A9}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BA4A81CB-0B17-4CD7-8B51-441987C8206B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailSender", "MailSender\MailSender.csproj", "{E42CBA9D-E906-4C99-8188-7865B3EF29E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{BA4A81CB-0B17-4CD7-8B51-441987C8206B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA4A81CB-0B17-4CD7-8B51-441987C8206B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA4A81CB-0B17-4CD7-8B51-441987C8206B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E42CBA9D-E906-4C99-8188-7865B3EF29E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E42CBA9D-E906-4C99-8188-7865B3EF29E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E42CBA9D-E906-4C99-8188-7865B3EF29E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E42CBA9D-E906-4C99-8188-7865B3EF29E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
