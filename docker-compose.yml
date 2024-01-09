@@ -15,6 +15,18 @@ services:
       - rabbitmq
     networks:
       - user-managament-network
+
+  mailsender:
+    image: ${DOCKER_REGISTRY-}mailsender
+    container_name: mail_sender_application
+    build:
+      context: .
+      dockerfile: MailSender/Dockerfile
+    depends_on:
+      - webapi
+      - rabbitmq
+    networks:
+      - user-managament-network
   
   sqlserver:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
@@ -34,7 +46,7 @@ services:
       - "6379:6379"
     networks:
       - user-managament-network
-
+  
   rabbitmq:
     image: rabbitmq:3-management
     container_name: "rabbitmqcontainer"
