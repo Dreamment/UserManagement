@@ -1,5 +1,6 @@
 ﻿using Entities.Exceptions.Database;
 using Entities.Models;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -160,6 +161,22 @@ namespace WebAPI.Extensions
         {
             var multiplexer = ConnectionMultiplexer.Connect(configuration.GetConnectionString("redisConnection"));
             services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+        }
+
+        
+        public static void ConfigureMassTransit(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddMassTransit(busConfigurator =>
+            {
+                busConfigurator.SetKebabCaseEndpointNameFormatter();
+                busConfigurator.UsingRabbitMq((context, busFactoryConfigurator) =>
+                {
+                    busFactoryConfigurator.Host(configuration.GetConnectionString("rabbitMQConnection"), hostConfigurator => { });
+                    busFactoryConfigurator.Exclusive = false;
+                    busFactoryConfigurator.AutoDelete = false;
+                    busFactoryConfigurator.Durable = true;
+                });
+            });
         }
     }
 }

@@ -20,6 +20,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.ConfigureRedis(builder.Configuration);
+builder.Services.ConfigureMassTransit(builder.Configuration);
 
 var app = builder.Build();
 
