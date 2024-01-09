@@ -3,6 +3,8 @@ using Entities.ErrorModel;
 using Entities.Exceptions.BadRequest;
 using Entities.Exceptions.Database;
 using Entities.Exceptions.NotFound;
+using Entities.Messages;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Services.Contracts;
@@ -16,11 +18,15 @@ namespace WebAPI.Controllers
     {
         private readonly IAuthenticationService _authenticationManager;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public AuthController(IAuthenticationService authenticationManager, IHubContext<NotificationHub> hubContext)
+        public AuthController(IAuthenticationService authenticationManager,
+            IHubContext<NotificationHub> hubContext,
+            IPublishEndpoint publishEndpoint)
         {
             _authenticationManager = authenticationManager;
             _hubContext = hubContext;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpPost("Register")]
@@ -37,6 +43,12 @@ namespace WebAPI.Controllers
                         new ErrorDetails(StatusCodes.Status400BadRequest, error));
                 }
                 await _hubContext.Clients.Group("Admin").SendAsync("UserAdded", $"User added with {userForRegistrationDto.UserName}");
+                await _publishEndpoint.Publish(new SendMailMessage()
+                {
+                    UserName = userForRegistrationDto.UserName,
+                    Email = userForRegistrationDto.Email,
+                    Subject = "Welcome to the system"
+                });
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (BadRequestException ex)
@@ -50,6 +62,12 @@ namespace WebAPI.Controllers
                 return StatusCode(
                     StatusCodes.Status404NotFound,
                     new ErrorDetails(StatusCodes.Status404NotFound, ex.Message));
+            }
+            catch (UserNameAlreadyRegisteredDatabaseException ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status400BadRequest,
+                    new ErrorDetails(StatusCodes.Status400BadRequest, ex.Message));
             }
             catch (Exception ex)
             {
